@@ -9,24 +9,24 @@
     <meta name="generator" content="Retype 3.8.1">
 
     <!-- Primary Meta Tags -->
-    <title>Pr&#233;sentation de la Solution ETL en Python pour le Traitement des Donn&#233;es Pand&#233;miques | MSPR 61</title>
-    <meta name="title" content="Présentation de la Solution ETL en Python pour le Traitement des Données Pandémiques | MSPR 61">
-    <meta name="description" content="Ce projet met en place une solution ETL (Extract, Transform, Load) en Python pour collecter, transformer et charger des données concernant les...">
+    <title>Diagramme de Gant | MSPR 61</title>
+    <meta name="title" content="Diagramme de Gant | MSPR 61">
+    <meta name="description" content="Gant">
 
     <!-- Canonical -->
-    <link rel="canonical" href="/documentation/etlprocess/">
+    <link rel="canonical" href="/documentation/gant/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="/documentation/etlprocess/">
-    <meta property="og:title" content="Présentation de la Solution ETL en Python pour le Traitement des Données Pandémiques | MSPR 61">
-    <meta property="og:description" content="Ce projet met en place une solution ETL (Extract, Transform, Load) en Python pour collecter, transformer et charger des données concernant les...">
+    <meta property="og:url" content="/documentation/gant/">
+    <meta property="og:title" content="Diagramme de Gant | MSPR 61">
+    <meta property="og:description" content="Gant">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="/documentation/etlprocess/">
-    <meta property="twitter:title" content="Présentation de la Solution ETL en Python pour le Traitement des Données Pandémiques | MSPR 61">
-    <meta property="twitter:description" content="Ce projet met en place une solution ETL (Extract, Transform, Load) en Python pour collecter, transformer et charger des données concernant les...">
+    <meta property="twitter:url" content="/documentation/gant/">
+    <meta property="twitter:title" content="Diagramme de Gant | MSPR 61">
+    <meta property="twitter:description" content="Gant">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
@@ -35,7 +35,6 @@
     <script data-cfasync="false" src="../../resources/js/config.js?v=3.8.1.800458933378" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.8.1" data-turbo-eval="false" defer></script>
     <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.8.1.800458933378" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.8.1.800458933378" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -169,10 +168,10 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="présentation-de-la-solution-etl-en-python-pour-le-traitement-des-données-pandémiques" class="break-words">
+<doc-anchor-target id="diagramme-de-gant" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#présentation-de-la-solution-etl-en-python-pour-le-traitement-des-données-pandémiques">#</doc-anchor-trigger>
-        <span>Présentation de la Solution ETL en Python pour le Traitement des Données Pandémiques</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#diagramme-de-gant">#</doc-anchor-trigger>
+        <span>Diagramme de Gant</span>
     </h1>
 </doc-anchor-target>
 <div class="-mt-3 mb-12 flex flex-wrap text-sm text-gray-400 dark:text-dark-350 items-center">
@@ -180,342 +179,17 @@
     <div><a href="../../categories/documentation/">Documentation</a></div>
 </div>
 
-<doc-anchor-target id="1-introduction">
+<doc-anchor-target id="diagramme-de-gant">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#1-introduction">#</doc-anchor-trigger>
-        <span>1. Introduction</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#diagramme-de-gant">#</doc-anchor-trigger>
+        <span>Diagramme de Gant</span>
     </h2>
 </doc-anchor-target>
-<p>Ce projet met en place une solution ETL (Extract, Transform, Load) en Python pour collecter, transformer et charger des données concernant les pandémies de COVID-19 et Monkeypox à partir de sources multiples. L&#x27;objectif est de préparer des données cohérentes et exploitables pour une analyse approfondie. Nous utilisons Python et ses bibliothèques comme pandas pour le traitement des données et la gestion des fichiers CSV.</p>
-<hr>
-<doc-anchor-target id="2-objectif-de-la-solution-etl">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#2-objectif-de-la-solution-etl">#</doc-anchor-trigger>
-        <span>2. Objectif de la Solution ETL</span>
-    </h2>
-</doc-anchor-target>
-<p>L&#x27;objectif principal de cette solution ETL est de traiter des fichiers CSV provenant de différentes sources de données (par exemple, Worldometer, OWID, etc.) en trois étapes essentielles :</p>
-<ol>
-<li>Extraction des données des fichiers sources.</li>
-<li>Transformation pour harmoniser, nettoyer, et enrichir les données.</li>
-<li>Chargement des données nettoyées dans un format prêt à l’analyse.</li>
-</ol>
-<hr>
-<doc-anchor-target id="3-description-du-processus-etl">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#3-description-du-processus-etl">#</doc-anchor-trigger>
-        <span>3. Description du Processus ETL</span>
-    </h2>
-</doc-anchor-target>
-<doc-anchor-target id="31-extraction-des-données-extract">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#31-extraction-des-données-extract">#</doc-anchor-trigger>
-        <span>3.1. Extraction des Données (Extract)</span>
-    </h3>
-</doc-anchor-target>
-<p>L&#x27;extraction est effectuée en lisant des fichiers CSV provenant de différentes sources. Chaque fichier contient des informations relatives aux cas de COVID-19 ou de Monkeypox. Les données sont lues dans des DataFrames pandas pour faciliter leur traitement.</p>
-<p>Les fichiers sources sont les suivants :</p>
-<ul>
-<li><code v-pre>worldometer_coronavirus_daily_data.csv</code> (COVID-19 Worldometer)</li>
-<li><code v-pre>full_grouped.csv</code> (COVID-19 Our World in Data)</li>
-<li><code v-pre>owid-monkeypox-data.csv</code> (Monkeypox)</li>
-</ul>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">data1 = pd.read_csv('data1/worldometer_coronavirus_daily_data.csv')
-data2 = pd.read_csv('data2/full_grouped.csv')
-data3 = pd.read_csv('data3/owid-monkeypox-data.csv')</code></pre>
-</doc-codeblock></div>
-<hr>
-<doc-anchor-target id="32-transformation-des-données-transform">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#32-transformation-des-données-transform">#</doc-anchor-trigger>
-        <span>3.2. Transformation des Données (Transform)</span>
-    </h3>
-</doc-anchor-target>
-<p>Une fois les données extraites, plusieurs transformations sont effectuées pour assurer l&#x27;homogénéité et la cohérence des données à travers les différentes sources :</p>
-<ol>
-<li><strong>Renommage des Colonnes</strong> : Les colonnes des trois DataFrames sont renommées pour correspondre à une structure uniforme et simplifiée.</li>
-</ol>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">data1.rename(columns={
-    &quot;date&quot;: &quot;date&quot;,
-    &quot;country&quot;: &quot;country&quot;,
-    &quot;cumulative_total_cases&quot;: &quot;total_cases&quot;,
-    &quot;daily_new_cases&quot;: &quot;new_cases&quot;,
-    &quot;active_cases&quot;: &quot;active_cases&quot;,
-    &quot;cumulative_total_deaths&quot;: &quot;total_deaths&quot;,
-    &quot;daily_new_deaths&quot;: &quot;new_deaths&quot;
-}, inplace=True)
-
-
-data2.rename(columns={
-    &quot;date&quot;: &quot;date&quot;,
-    &quot;country/region&quot;: &quot;country&quot;,
-    &quot;confirmed&quot;: &quot;total_cases&quot;,
-    &quot;deaths&quot;: &quot;total_deaths&quot;,
-    &quot;new_cases&quot;: &quot;new_cases&quot;,
-    &quot;new_deaths&quot;: &quot;new_deaths&quot;,
-    &quot;active&quot;: &quot;active_cases&quot;,
-    &quot;recovered&quot;: &quot;total_recovered&quot;,
-    &quot;new_recovered&quot;: &quot;daily_recovered&quot;
-}, inplace=True)
-
-data3.rename(columns={
-    &quot;location&quot;: &quot;country&quot;,
-    &quot;date&quot;: &quot;date&quot;,
-    &quot;total_cases&quot;: &quot;total_cases&quot;,
-    &quot;new_cases&quot;: &quot;new_cases&quot;,
-    &quot;active_cases&quot;: &quot;active_cases&quot;,
-    &quot;total_deaths&quot;: &quot;total_deaths&quot;,
-    &quot;new_deaths&quot;: &quot;new_deaths&quot;
-}, inplace=True)</code></pre>
-</doc-codeblock></div>
-<ol start="2">
-<li><strong>Conversion des Dates</strong> : La colonne date est convertie en un format datetime.</li>
-</ol>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">data2['date'] = pd.to_datetime(data2['date'])</code></pre>
-</doc-codeblock></div>
-<ol start="3">
-<li><strong>Calcul des Récupérations Quotidiennes</strong> : La colonne <code v-pre>daily_recovered</code> est calculée pour estimer le nombre de récupérations quotidiennes.</li>
-</ol>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">data1[&quot;total_recovered&quot;] = (data1[&quot;Previous_Total_Cases&quot;] + data1[&quot;new_cases&quot;]) - (data1[&quot;active_cases&quot;] + data1[&quot;total_deaths&quot;])
-data1[&quot;total_recovered&quot;] = data1[&quot;total_recovered&quot;].clip(lower=0)</code></pre>
-</doc-codeblock></div>
-<ol start="4">
-<li><strong>Gestion des Valeurs Manquantes</strong> : Les valeurs manquantes sont remplacées par zéro (0).</li>
-</ol>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">data1.fillna(0, inplace=True)
-data2.fillna(0, inplace=True)
-data3.fillna(0, inplace=True)</code></pre>
-</doc-codeblock></div>
-<ol start="5">
-<li><strong>Filtrage des Données par Pays</strong> : Les données sont groupées par pays et stockées dans des fichiers CSV temporaires.</li>
-</ol>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">for country, group in data1.groupby(&quot;country&quot;):
-    os.makedirs('tempfilter', exist_ok=True)
-    group.to_csv(f'tempfilter/{country}_data1_filtered.csv', index=False)</code></pre>
-</doc-codeblock></div>
-<ol start="6">
-<li><strong>Calcul de <code v-pre>daily_recovered</code> pour chaque pays</strong> : Basé sur la différence entre les récupérations du jour et celles de la veille.</li>
-</ol>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">        dataf = pd.read_csv(file_path, delimiter=',')
-        dataf[&quot;Previous_Total_Recovery&quot;] = dataf[&quot;total_recovered&quot;].shift(1).fillna(0)
-        dataf[&quot;daily_recovered&quot;] = (dataf[&quot;total_recovered&quot;]- dataf[&quot;Previous_Total_Recovery&quot;])</code></pre>
-</doc-codeblock></div>
-<hr>
-<doc-anchor-target id="33-chargement-des-données-load">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#33-chargement-des-données-load">#</doc-anchor-trigger>
-        <span>3.3. Chargement des Données (Load)</span>
-    </h3>
-</doc-anchor-target>
-<p>Une fois les transformations effectuées, les données sont chargées dans une base de données PostgreSQL.</p>
-<ol>
-<li><strong>Connexion à PostgreSQL</strong> :
-<ul>
-<li>Les informations de connexion sont stockées dans un fichier <code v-pre>.env</code>.</li>
-</ul>
-</li>
-</ol>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">load_dotenv()
-DB_NAME = os.getenv(&quot;DB_NAME&quot;)
-DB_USER = os.getenv(&quot;DB_USER&quot;)
-DB_PASSWORD = os.getenv(&quot;DB_PASSWORD&quot;)
-DB_HOST = os.getenv(&quot;DB_HOST&quot;)
-DB_PORT = os.getenv(&quot;DB_PORT&quot;, &quot;5432&quot;)
-
-print(&quot;Connecting to PostgreSQL...&quot;)
-engine = create_engine(f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}')
-engine.connect()</code></pre>
-</doc-codeblock></div>
-<ol start="2">
-<li><strong>Chargement des fichiers CSV</strong> :
-<ul>
-<li>Les fichiers transformés sont lus avec Pandas.</li>
-<li>Trois fichiers sont pris en compte : deux pour les données COVID et un pour Monkeypox.</li>
-</ul>
-</li>
-</ol>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">data1 = pd.read_csv('filtered/data1_filtered.csv')  # COVID
-data2 = pd.read_csv('filtered/data2_filtered.csv')  # COVID
-data3 = pd.read_csv('filtered/data3_filtered.csv')  # MPOX</code></pre>
-</doc-codeblock></div>
-<ol start="3">
-<li><strong>Insertion dans PostgreSQL</strong> :
-<ul>
-<li>Les données COVID sont insérées dans <code v-pre>covid_data</code> avec <code v-pre>if_exists='replace'</code>.</li>
-<li>Les données Monkeypox sont ajoutées à <code v-pre>mpox_data</code> en mode <code v-pre>append</code>.</li>
-</ul>
-</li>
-</ol>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">TABLE_COVID = &quot;covid_data&quot;
-TABLE_MPOX = &quot;mpox_data&quot;
-
-print(&quot;Importing data...&quot;)
-data1.to_sql(TABLE_COVID, engine, if_exists='replace', index=False)
-data2.to_sql(TABLE_COVID, engine, if_exists='replace', index=False)
-data3.to_sql(TABLE_MPOX, engine, if_exists='append', index=False)</code></pre>
-</doc-codeblock></div>
-<ol start="4">
-<li><strong>Fermeture de la connexion</strong> :
-<ul>
-<li>Une fois les données chargées, la connexion est fermée.</li>
-</ul>
-</li>
-</ol>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">engine.dispose()</code></pre>
-</doc-codeblock></div>
-<hr>
-<doc-anchor-target id="4-justification-de-la-solution-etl-en-python">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#4-justification-de-la-solution-etl-en-python">#</doc-anchor-trigger>
-        <span>4. Justification de la Solution ETL en Python</span>
-    </h2>
-</doc-anchor-target>
-<doc-anchor-target id="41-utilisation-de-pandas-pour-la-transformation-des-données">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#41-utilisation-de-pandas-pour-la-transformation-des-données">#</doc-anchor-trigger>
-        <span>4.1. Utilisation de Pandas pour la Transformation des Données</span>
-    </h3>
-</doc-anchor-target>
-<p>Pandas permet de :</p>
-<ul>
-<li>Lire et écrire facilement des fichiers CSV.</li>
-<li>Appliquer des transformations complexes sur les données.</li>
-<li>Gérer les valeurs manquantes avec <code v-pre>fillna</code>.</li>
-<li>Manipuler efficacement les données temporelles.</li>
-</ul>
-<doc-anchor-target id="42-flexibilité-et-extensibilité-de-la-solution">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#42-flexibilité-et-extensibilité-de-la-solution">#</doc-anchor-trigger>
-        <span>4.2. Flexibilité et Extensibilité de la Solution</span>
-    </h3>
-</doc-anchor-target>
-<ul>
-<li>Facile à adapter pour inclure de nouvelles sources de données.</li>
-<li>Permet des ajustements rapides aux transformations.</li>
-</ul>
-<doc-anchor-target id="43-gestion-des-fichiers-temporaires">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#43-gestion-des-fichiers-temporaires">#</doc-anchor-trigger>
-        <span>4.3. Gestion des Fichiers Temporaires</span>
-    </h3>
-</doc-anchor-target>
-<ul>
-<li>Création de fichiers CSV temporaires, supprimés après utilisation pour optimiser la mémoire.</li>
-</ul>
-<doc-anchor-target id="44-séparation-des-étapes-etl">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#44-séparation-des-étapes-etl">#</doc-anchor-trigger>
-        <span>4.4. Séparation des Étapes ETL</span>
-    </h3>
-</doc-anchor-target>
-<ul>
-<li>Améliore la lisibilité et la maintenance du code.</li>
-<li>Facilite le diagnostic des erreurs.</li>
-</ul>
-<doc-anchor-target id="45-organisation-des-fichiers">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#45-organisation-des-fichiers">#</doc-anchor-trigger>
-        <span>4.5. Organisation des Fichiers</span>
-    </h3>
-</doc-anchor-target>
-<ul>
-<li>Stockage des fichiers transformés dans <code v-pre>filtered/</code> pour une gestion optimale.</li>
-</ul>
-<hr>
-<doc-anchor-target id="5-comparaison-des-solutions-etl">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#5-comparaison-des-solutions-etl">#</doc-anchor-trigger>
-        <span>5. Comparaison des Solutions ETL</span>
-    </h2>
-</doc-anchor-target>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="comfortable">
-<thead>
-<tr>
-<th>Solution ETL</th>
-<th>Langage</th>
-<th>Facilité d&#x27;utilisation</th>
-<th>Performance</th>
-<th>Extensibilité</th>
-<th>Coût</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Python (Pandas)</td>
-<td>Python</td>
-<td>Facile</td>
-<td>Bonne</td>
-<td>Très flexible</td>
-<td>Gratuit</td>
-</tr>
-<tr>
-<td>Apache Nifi</td>
-<td>Java</td>
-<td>Interface intuitive</td>
-<td>Bonne</td>
-<td>Modulaire</td>
-<td>Gratuit</td>
-</tr>
-<tr>
-<td>Talend</td>
-<td>Java</td>
-<td>Moyen</td>
-<td>Excellente</td>
-<td>Très modulaire</td>
-<td>Payant</td>
-</tr>
-<tr>
-<td>Apache Spark</td>
-<td>Scala, Python</td>
-<td>Complexe</td>
-<td>Très élevée</td>
-<td>Très flexible</td>
-<td>Gratuit (Open-source)</td>
-</tr>
-<tr>
-<td>Airflow</td>
-<td>Python</td>
-<td>Complexe</td>
-<td>Bonne</td>
-<td>Très modulaire</td>
-<td>Gratuit</td>
-</tr>
-</tbody>
-</table>
-</div>
-<ul>
-<li><strong>Python (Pandas)</strong> : Idéal pour des ETL rapides et flexibles sur des fichiers CSV.</li>
-<li><strong>Apache Nifi</strong> : Solution visuelle pour les workflows de données.</li>
-<li><strong>Talend</strong> : Robuste mais coûteux.</li>
-<li><strong>Apache Spark</strong> : Adapté aux traitements volumineux.</li>
-<li><strong>Airflow</strong> : Plus orienté vers l&#x27;orchestration ETL.</li>
-</ul>
-<hr>
-<doc-anchor-target id="6-conclusion">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#6-conclusion">#</doc-anchor-trigger>
-        <span>6. Conclusion</span>
-    </h2>
-</doc-anchor-target>
-<p>Cette solution ETL en Python permet de traiter et transformer des données sur les pandémies COVID-19 et Monkeypox. L’utilisation de Pandas facilite la manipulation et la transformation des données, tout en offrant une grande flexibilité.</p>
-<p>Le code est structuré de manière claire et modulaire, ce qui permet :</p>
-<ul>
-<li>D&#x27;ajouter facilement de nouvelles sources de données.</li>
-<li>D’apporter des ajustements aux transformations.</li>
-</ul>
-<p>Cette solution est prête pour de futures extensions et s&#x27;adapte aux besoins de l&#x27;analyse de pandémie à grande échelle.</p>
+<p><figure class="content-center">
+    <img src="gant.png" alt="Gant">
+    <figcaption class="caption">Gant</figcaption>
+</figure>
+</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -525,20 +199,20 @@ data3.to_sql(TABLE_MPOX, engine, if_exists='append', index=False)</code></pre>
                             
                                 <nav class="flex mt-14">
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../documentation/data_filters_doc/">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../documentation/dataprocessing/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
-                                                <span class="block mt-1">Documentation des filtres appliqués aux données</span>
+                                                <span class="block mt-1">Data Processing</span>
                                             </span>
                                         </a>
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../documentation/meriseimages/">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../documentation/data_filters_doc/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">Modèle de données Mérise</span>
+                                                <span class="block mt-1">Documentation des filtres appliqués aux données</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
@@ -582,6 +256,6 @@ data3.to_sql(TABLE_MPOX, engine, if_exists='append', index=False)</code></pre>
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "ETL Process", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Diagramme de Gant", level: 2, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
