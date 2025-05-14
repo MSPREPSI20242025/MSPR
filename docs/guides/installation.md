@@ -103,14 +103,14 @@ pnpm dev  # Mode développement
 pnpm build && pnpm start  # Mode production
 ```
 
-L'API sera disponible à l'adresse `http://localhost:3000` (port par défaut).
+L'API sera disponible à l'adresse `http://localhost:4455` (port par défaut).
 
 ## Vérification de l'installation
 
 Pour vérifier que tout fonctionne correctement, vous pouvez accéder à :
 
--   Documentation de l'API : `http://localhost:3000/docs`
--   Endpoint de statut : `http://localhost:3000/api/status`
+-   Documentation de l'API : `http://localhost:4455/api/docs`
+-   Endpoint de statut : `http://localhost:4455/`
 
 ## Dépannage
 
