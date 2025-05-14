@@ -83,4 +83,4 @@ Toutes les données sont standardisées selon un format commun incluant : date, 
 
 ## Documentation de l'API
 
-Pour plus d'informations sur les endpoints disponibles et leur utilisation, consultez la [documentation de l'API REST](/rest/api-docs).
+Pour plus d'informations sur les endpoints disponibles et leur utilisation, consultez la [documentation de l'API REST](/mspr/rest).
