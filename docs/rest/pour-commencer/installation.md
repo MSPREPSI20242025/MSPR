@@ -91,7 +91,7 @@ curl http://localhost:3000/api/covid/public/latest
 
 Vous devriez recevoir une réponse JSON avec les données COVID.
 
-## Installation Docker (Alternative)
+<!-- ## Installation Docker (Alternative)
 
 Si vous préférez utiliser Docker, vous pouvez utiliser les commandes suivantes :
 
@@ -101,7 +101,7 @@ docker build -t covid-mpox-api .
 
 # Exécuter le conteneur
 docker run -p 3000:3000 --env-file .env covid-mpox-api
-```
+``` -->
 
 ## Dépannage
 
