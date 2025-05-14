@@ -16,7 +16,7 @@ Le projet MSPR 6.1 est structuré en deux parties principales:
 
 ```mermaid
 graph TD
-    A[Kaggle Datasets] -->|fetch.py| B[Données brutes]
+    A[Datasets] -->|fetch.py| B[Données brutes]
     B -->|main.py| C[Données standardisées]
     C -->|postgress.py| D[(Base de données PostgreSQL)]
     D <-->|Prisma ORM| E[API REST]
