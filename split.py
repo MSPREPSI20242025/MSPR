@@ -15,7 +15,7 @@ for filename in filenames:
     df['date'] = pd.to_datetime(df['date'])
 
     df = df.sort_values(by='date')
-    split_index = int(0.6 * len(df))
+    split_index = int(0.9 * len(df))
 
     train_df = df.iloc[:split_index]
     test_df = df.iloc[split_index:]
