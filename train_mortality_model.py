@@ -13,8 +13,10 @@ import xgboost as xgb
 df = pd.read_csv('split/data1_filtered_train.csv')
 
 # Choix des features et de la cible
-X = df[['total_cases', 'total_recovered']]  # adapte selon tes colonnes
-y = df['total_deaths']
+features = ["total_cases", "new_cases", "total_deaths"]
+X = df[features]
+y = df["new_deaths"]
+
 
 # Liste des modèles à tester
 models = {
