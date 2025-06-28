@@ -21,9 +21,8 @@ connection = engine.connect()
 
 print("Loading data...")
 # Charger les fichiers CSV
-data1 = pd.read_csv('filtered/data1_filtered.csv')  # COVID
-data2 = pd.read_csv('filtered/data2_filtered.csv')  # COVID
-data3 = pd.read_csv('filtered/data3_filtered.csv')  # MPOX
+data1 = pd.read_csv('filtered/covid_filtered.csv')  # COVID
+data2 = pd.read_csv('filtered/mpox_filtered.csv')  # MPOX
 
 # Définir les noms des tables
 TABLE_COVID = "covid_data"
@@ -32,10 +31,9 @@ TABLE_MPOX = "mpox_data"
 print("Importing data...")
 # Charger les données COVID (data1 et data2)
 data1.to_sql(TABLE_COVID, engine, if_exists='replace', index=True)
-data2.to_sql(TABLE_COVID, engine, if_exists='replace', index=True)
 
 # Charger les données MPOX (data3)
-data3.to_sql(TABLE_MPOX, engine, if_exists='replace', index=True)
+data2.to_sql(TABLE_MPOX, engine, if_exists='replace', index=True)
 
 print("Data imported successfully!")
 connection.close()

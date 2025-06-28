@@ -13,7 +13,7 @@
     "license": "ISC",
     "packageManager": "pnpm@10.6.3+sha512.bb45e34d50a9a76e858a95837301bfb6bd6d35aea2c5d52094fa497a467c43f5c440103ce2511e9e0a2f89c3d6071baac3358fc68ac6fb75e2ceb3d2736065e6",
     "dependencies": {
-        "@prisma/client": "^6.5.0",
+        "@prisma/client": "6.10.1",
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
@@ -28,7 +28,7 @@
         "@types/uuid": "^10.0.0",
         "concurrently": "^9.1.2",
         "nodemon": "^3.1.9",
-        "prisma": "^6.5.0",
+        "prisma": "6.10.1",
         "tsx": "^4.19.3",
         "typescript": "^5.8.2"
     },

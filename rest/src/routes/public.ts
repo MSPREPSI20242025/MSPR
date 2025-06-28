@@ -69,7 +69,7 @@ router.get(
                 orderBy: {
                     date: "desc",
                 },
-                take: 30, // Last 30 days
+                take: 30, // Last 30 weeks
             });
 
             res.json(transformBigInts(data));
@@ -105,8 +105,7 @@ router.get(
             const totals: any = await prisma.$queryRaw`
       SELECT 
         SUM(total_cases) as total_cases, 
-        SUM(total_deaths) as total_deaths, 
-        SUM(total_recovered) as total_recovered
+        SUM(total_deaths) as total_deaths
       FROM "covid_data"
       WHERE date = ${latestDate.date}
     `;

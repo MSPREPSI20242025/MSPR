@@ -18,12 +18,9 @@ model CovidData {
   date            String
   country         String
   total_cases     BigInt
-  new_cases       BigInt
-  active_cases    BigInt
+  new_cases       Float
   total_deaths    BigInt
-  new_deaths      BigInt
-  total_recovered BigInt
-  daily_recovered BigInt
+  new_deaths      Float
 
   @@map("covid_data")
   @@index([country, date])
@@ -33,10 +30,10 @@ model MpoxData {
   index        BigInt      @id @default(autoincrement())
   date         String
   country      String
-  total_cases  Float
-  new_cases    Float
-  total_deaths Float
-  new_deaths   Float
+  total_cases  BigInt
+  new_cases    BigInt
+  total_deaths BigInt
+  new_deaths   BigInt
 
   @@map("mpox_data")
   @@index([country, date])
