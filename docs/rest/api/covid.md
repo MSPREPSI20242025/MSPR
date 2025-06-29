@@ -28,12 +28,9 @@ GET /covid/public/latest
         "date": "2023-03-15",
         "country": "United States",
         "total_cases": 32580458,
-        "new_cases": 58480,
-        "active_cases": 6964527,
+        "new_cases": 58480.5,
         "total_deaths": 582114,
-        "new_deaths": 585,
-        "total_recovered": 25033817,
-        "daily_recovered": 38170
+        "new_deaths": 585.0
     }
     // Enregistrements supplémentaires...
 ]
@@ -68,12 +65,9 @@ GET /covid/public/country/United%20States
         "date": "2023-03-15",
         "country": "United States",
         "total_cases": 32580458,
-        "new_cases": 58480,
-        "active_cases": 6964527,
+        "new_cases": 58480.5,
         "total_deaths": 582114,
-        "new_deaths": 585,
-        "total_recovered": 25033817,
-        "daily_recovered": 38170
+        "new_deaths": 585.0
     }
     // Enregistrements supplémentaires...
 ]
@@ -91,9 +85,8 @@ GET /covid/public/totals
 
 ```json
 {
-    "total_cases": "128963254",
-    "total_deaths": "2819892",
-    "total_recovered": "104122331"
+    "total_cases": 128963254,
+    "total_deaths": 2819892
 }
 ```
 
@@ -131,12 +124,9 @@ GET /covid/data?country=Spain&limit=10
         "date": "2023-03-15",
         "country": "Spain",
         "total_cases": 3247738,
-        "new_cases": 4838,
-        "active_cases": 798453,
+        "new_cases": 4838.2,
         "total_deaths": 75783,
-        "new_deaths": 35,
-        "total_recovered": 2373502,
-        "daily_recovered": 3291
+        "new_deaths": 35.0
     }
     // Enregistrements supplémentaires...
 ]
@@ -158,11 +148,8 @@ POST /covid/data
     "country": "United States",
     "total_cases": 32638938,
     "new_cases": 58480,
-    "active_cases": 7023007,
     "total_deaths": 582699,
-    "new_deaths": 585,
-    "total_recovered": 25033232,
-    "daily_recovered": 38170
+    "new_deaths": 585
 }
 ```
 
@@ -197,11 +184,8 @@ PUT /covid/data/:id
     "country": "United States",
     "total_cases": 32638938,
     "new_cases": 58480,
-    "active_cases": 7023007,
     "total_deaths": 582699,
-    "new_deaths": 585,
-    "total_recovered": 25033232,
-    "daily_recovered": 38170
+    "new_deaths": 585
 }
 ```
 
@@ -243,15 +227,63 @@ DELETE /covid/data/:id
 
 ```typescript
 interface CovidData {
-    id: number; // Identifiant unique
+    id: number; // Identifiant unique (mappé depuis index en base)
     date: string; // Date au format AAAA-MM-JJ
     country: string; // Nom du pays
-    total_cases: number; // Total des cas confirmés
-    new_cases: number; // Nouveaux cas pour cette date
-    active_cases: number; // Cas actifs
-    total_deaths: number; // Total des décès
-    new_deaths: number; // Nouveaux décès pour cette date
-    total_recovered: number; // Total des guérisons
-    daily_recovered: number; // Guérisons journalières
+    total_cases: number; // Total des cas confirmés (BigInt)
+    new_cases: number; // Nouveaux cas pour cette date (Float)
+    total_deaths: number; // Total des décès (BigInt)
+    new_deaths: number; // Nouveaux décès pour cette date (Float)
+}
+```
+
+## Notes sur les Données COVID
+
+### Types de Données
+
+-   **total_cases** et **total_deaths** : Valeurs entières importantes (BigInt en base de données)
+-   **new_cases** et **new_deaths** : Valeurs décimales (Float en base de données) pour permettre des moyennes ou des estimations
+
+### Différences avec la Documentation Précédente
+
+Cette API ne contient **pas** les champs suivants qui pourraient exister dans d'autres APIs COVID :
+
+-   `active_cases` - Cas actifs
+-   `total_recovered` - Total des guérisons
+-   `daily_recovered` - Guérisons journalières
+
+Ces champs ne sont pas disponibles dans le schéma de base de données actuel. Si vous avez besoin de ces données, contactez l'équipe de développement pour discuter d'une extension de l'API.
+
+### Utilisation Recommandée
+
+Pour calculer des métriques dérivées :
+
+-   **Taux de mortalité** : `total_deaths / total_cases * 100`
+-   **Tendances** : Comparer `new_cases` et `new_deaths` sur plusieurs dates
+
+Exemple d'usage en JavaScript :
+
+```javascript
+// Récupérer les données COVID pour un pays
+async function getCovidTrends(country) {
+    const response = await fetch(
+        `/api/covid/public/country/${encodeURIComponent(country)}`
+    );
+    const data = await response.json();
+
+    // Calculer la tendance sur 7 jours
+    const last7Days = data.slice(0, 7);
+    const avgNewCases =
+        last7Days.reduce((sum, day) => sum + day.new_cases, 0) / 7;
+
+    return {
+        country,
+        recent_avg_cases: Math.round(avgNewCases * 100) / 100,
+        latest_total: data[0].total_cases,
+        mortality_rate: (
+            (data[0].total_deaths / data[0].total_cases) *
+            100
+        ).toFixed(2),
+    };
 }
 ```

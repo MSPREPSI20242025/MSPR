@@ -109,11 +109,8 @@ router.post(
                 country,
                 total_cases,
                 new_cases,
-                active_cases,
                 total_deaths,
                 new_deaths,
-                total_recovered,
-                daily_recovered,
             } = req.body;
 
             await prisma.covidData.create({
@@ -122,11 +119,8 @@ router.post(
                     country,
                     total_cases: Number(total_cases),
                     new_cases: Number(new_cases),
-                    active_cases: Number(active_cases),
                     total_deaths: Number(total_deaths),
                     new_deaths: Number(new_deaths),
-                    total_recovered: Number(total_recovered),
-                    daily_recovered: Number(daily_recovered),
                 },
             });
 
@@ -188,11 +182,8 @@ router.put(
                 country,
                 total_cases,
                 new_cases,
-                active_cases,
                 total_deaths,
                 new_deaths,
-                total_recovered,
-                daily_recovered,
             } = req.body;
 
             await prisma.covidData.update({
@@ -202,11 +193,8 @@ router.put(
                     country,
                     total_cases: Number(total_cases),
                     new_cases: Number(new_cases),
-                    active_cases: Number(active_cases),
                     total_deaths: Number(total_deaths),
                     new_deaths: Number(new_deaths),
-                    total_recovered: Number(total_recovered),
-                    daily_recovered: Number(daily_recovered),
                 },
             });
 

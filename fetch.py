@@ -7,18 +7,23 @@ DOWNLOAD_PATH = os.path.expanduser("./downloads")
 
 # Mapping des fichiers ZIP et des dossiers de destination
 datasets = {
-    "covid19-global-dataset.zip": {
-        "url": "https://www.kaggle.com/api/v1/datasets/download/josephassaker/covid19-global-dataset",
-        "extract_to": "data1"
+    "WHO-COVID-19-global-data.csv": {
+        "url": "https://srhdpeuwpubsa.blob.core.windows.net/whdh/COVID/WHO-COVID-19-global-data.csv",
+        "extract_to": "raw_data"
     },
-    "corona-virus-report.zip": {
-        "url": "https://www.kaggle.com/api/v1/datasets/download/imdevskp/corona-virus-report",
-        "extract_to": "data2"
-    },
-    "mpox-monkeypox-data.zip": {
-        "url": "https://www.kaggle.com/api/v1/datasets/download/utkarshx27/mpox-monkeypox-data",
-        "extract_to": "data3"
-    }
+    
+    # "covid19-global-dataset.zip": {
+    #     "url": "https://www.kaggle.com/api/v1/datasets/download/josephassaker/covid19-global-dataset",
+    #     "extract_to": "data1"
+    # },
+    # "corona-virus-report.zip": {
+    #     "url": "https://www.kaggle.com/api/v1/datasets/download/imdevskp/corona-virus-report",
+    #     "extract_to": "data2"
+    # },
+    # "mpox-monkeypox-data.zip": {
+    #     "url": "https://www.kaggle.com/api/v1/datasets/download/utkarshx27/mpox-monkeypox-data",
+    #     "extract_to": "data3"
+    # }
 }
 
 def download_and_extract():
@@ -36,15 +41,14 @@ def download_and_extract():
         subprocess.run(command, shell=True, check=True)
         print(f"{filename} downloaded.\n")
 
-        # Extract the ZIP file
-        print(f"Extraction of {filename} to {extract_path}")
-        with zipfile.ZipFile(file_path, 'r') as zip_ref:
-            zip_ref.extractall(extract_path)
-        print(f" Extraction done.")
+        # # Extract the ZIP file
+        # print(f"Extraction of {filename} to {extract_path}")
+        # with zipfile.ZipFile(file_path, 'r') as zip_ref:
+        #     zip_ref.extractall(extract_path)
+        # print(f" Extraction done.")
 
-        # Remove the ZIP file
-        os.remove(file_path)
-        print(f"{filename} deleted.\n")
+        os.rename(file_path, os.path.join(extract_path, filename))
+        print(f"{filename} moved.\n")
 
 if __name__ == "__main__":
     download_and_extract()
