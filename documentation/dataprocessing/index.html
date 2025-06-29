@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.8.1.800565052500">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.10.1.804546104039">
 
     <!-- See retype.com -->
-    <meta name="generator" content="Retype 3.8.1">
+    <meta name="generator" content="Retype 3.10.1">
 
     <!-- Primary Meta Tags -->
     <title>Documentation du Processus de Collecte et de Nettoyage des Donn&#233;es | MSPR 61</title>
     <meta name="title" content="Documentation du Processus de Collecte et de Nettoyage des Données | MSPR 61">
-    <meta name="description" content="Ce document détaille le processus de collecte, d'extraction et de nettoyage des ensembles de données COVID-19 et variole du singe (Mpox).">
+    <meta name="description" content="Ce document détaille le processus de collecte, d'extraction et de nettoyage des ensembles de données COVID-19 et MPOX.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/documentation/dataprocessing/">
@@ -20,37 +20,37 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/documentation/dataprocessing/">
     <meta property="og:title" content="Documentation du Processus de Collecte et de Nettoyage des Données | MSPR 61">
-    <meta property="og:description" content="Ce document détaille le processus de collecte, d'extraction et de nettoyage des ensembles de données COVID-19 et variole du singe (Mpox).">
+    <meta property="og:description" content="Ce document détaille le processus de collecte, d'extraction et de nettoyage des ensembles de données COVID-19 et MPOX.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/documentation/dataprocessing/">
     <meta property="twitter:title" content="Documentation du Processus de Collecte et de Nettoyage des Données | MSPR 61">
-    <meta property="twitter:description" content="Ce document détaille le processus de collecte, d'extraction et de nettoyage des ensembles de données COVID-19 et variole du singe (Mpox).">
+    <meta property="twitter:description" content="Ce document détaille le processus de collecte, d'extraction et de nettoyage des ensembles de données COVID-19 et MPOX.">
 
-    <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="../../resources/css/retype.css?v=3.8.1.800565052500" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.10.1.804546104039" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.8.1.800565052500" data-turbo-eval="false" defer></script>
-    <script data-cfasync="false" src="../../resources/js/retype.js?v=3.8.1" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.8.1.800565052500" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.8.1.800565052500" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.10.1.804546104039" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/retype.js?v=3.10.1" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.10.1.804546104039" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.10.1.804546104039" defer></script>
 </head>
 <body>
-    <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
-        <div class="absolute bottom-0 left-0 bg-gray-100 dark:bg-dark-800" style="top: 5rem; right: 50%"></div>
+    <div id="retype-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
+        <div class="absolute bottom-0 left-0 dark:bg-dark-800" style="top: 5rem; right: 50%"></div>
     
-        <header id="docs-site-header" class="sticky top-0 z-30 flex w-full h-16 bg-white border-b border-gray-200 md:h-20 dark:bg-dark-850 dark:border-dark-650">
+        <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-white border-b border-gray-200 md:h-20 dark:bg-dark-850 dark:border-dark-650">
             <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
                 <!-- Mobile menu button skeleton -->
-                <button v-cloak class="skeleton docs-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-none rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
-                <div v-cloak id="docs-sidebar-toggle"></div>
+                <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-none rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+                <div v-cloak id="retype-sidebar-left-toggle-button"></div>
         
                 <!-- Logo -->
                 <div class="flex items-center justify-between h-full py-2 md:w-75">
                     <div class="flex items-center px-2 md:px-6">
-                        <a id="docs-site-logo" href="../../" class="flex items-center leading-snug text-2xl">
+                        <a id="retype-branding-logo" href="../../" class="flex items-center leading-snug text-2xl">
                             <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">MSPR 6.1</span>
                         </a>
                     </div>
@@ -60,7 +60,7 @@
         
                 <div class="flex justify-between md:grow">
                     <!-- Top Nav -->
-                    <nav class="hidden md:flex">
+                    <nav id="retype-header-nav" class="hidden md:flex">
                         <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
                             <li class="mr-6">
                                 <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-blue-500 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200" href="https://github.com/ghoostyy/mspr61">GitHub</a>
@@ -98,7 +98,7 @@
                     </div>
         
                     <div v-cloak class="flex justify-end grow">
-                        <div id="docs-mobile-search-button"></div>
+                        <div id="retype-mobile-search-button"></div>
                         <doc-search-desktop></doc-search-desktop>
         
                         <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
@@ -108,7 +108,7 @@
             </div>
         </header>
     
-        <div class="container relative flex bg-white">
+        <div id="retype-container" class="container relative flex bg-white">
             <!-- Sidebar Skeleton -->
             <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-white border-gray-200 sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton dark:bg-dark-800 dark:border-dark-650">
             
@@ -163,11 +163,11 @@
             <div class="grow min-w-0 dark:bg-dark-850">
                 <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
                 <div class="flex">
-                    <div class="min-w-0 p-4 grow md:px-16">
+                    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
                         <main class="relative pb-12 lg:pt-2">
-                            <div class="docs-markdown" id="docs-content">
+                            <div class="retype-markdown" id="retype-content">
                                 <!-- Rendered if sidebar right is enabled -->
-                                <div id="docs-sidebar-right-toggle"></div>
+                                <div id="retype-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
 <doc-anchor-target id="documentation-du-processus-de-collecte-et-de-nettoyage-des-données" class="break-words">
     <h1>
@@ -175,7 +175,7 @@
         <span>Documentation du Processus de Collecte et de Nettoyage des Données</span>
     </h1>
 </doc-anchor-target>
-<div class="-mt-3 mb-12 flex flex-wrap text-sm text-gray-400 dark:text-dark-350 items-center">
+<div class="-mt-3 mb-12 flex flex-wrap text-sm text-gray-400 dark:text-dark-350 items-center print:justify-center">
     <div>In&nbsp;</div>
     <div><a href="../../categories/documentation/">Documentation</a></div>
 </div>
@@ -186,7 +186,7 @@
         <span>1. Introduction</span>
     </h2>
 </doc-anchor-target>
-<p>Ce document détaille le processus de collecte, d&#x27;extraction et de nettoyage des ensembles de données COVID-19 et variole du singe (Mpox). Les données sont récupérées depuis Kaggle, traitées et filtrées pour assurer leur cohérence et leur qualité avant analyse.</p>
+<p>Ce document détaille le processus de collecte, d&#x27;extraction et de nettoyage des ensembles de données COVID-19 et MPOX. Les données COVID-19 proviennent directement de l&#x27;Organisation Mondiale de la Santé (OMS) et les données MPOX d&#x27;un ensemble de données statique, garantissant une source officielle et fiable.</p>
 <doc-anchor-target id="2-collecte-des-données">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#2-collecte-des-données">#</doc-anchor-trigger>
@@ -199,51 +199,61 @@
         <span>2.1. Sources des Données</span>
     </h3>
 </doc-anchor-target>
-<p>Les données proviennent de trois sources principales sur Kaggle :</p>
+<p>Les données proviennent de deux sources principales :</p>
 <ul>
-<li><strong>COVID-19 Global Dataset</strong> (worldometer)</li>
-<li><strong>Corona Virus Report</strong> (Johns Hopkins)</li>
-<li><strong>Mpox Monkeypox Data</strong> (Our World in Data)</li>
+<li><strong>WHO COVID-19 Global Data</strong> - Données officielles de l&#x27;OMS</li>
+<li><strong>MPOX Dataset</strong> - Ensemble de données statique (mpox-22-june.csv)</li>
 </ul>
-<doc-anchor-target id="22-téléchargement-et-extraction">
+<doc-anchor-target id="22-architecture-simplifiée">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#22-téléchargement-et-extraction">#</doc-anchor-trigger>
-        <span>2.2. Téléchargement et Extraction</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#22-architecture-simplifiée">#</doc-anchor-trigger>
+        <span>2.2. Architecture Simplifiée</span>
     </h3>
 </doc-anchor-target>
-<p>Le script télécharge les fichiers ZIP contenant les données, les extrait dans des dossiers spécifiques et supprime les archives compressées.</p>
+<p>Le système a été simplifié pour utiliser des sources de données plus fiables et officielles :</p>
 <doc-anchor-target id="221-configuration-des-dossiers">
     <h4>
         <doc-anchor-trigger class="header-anchor-trigger" to="#221-configuration-des-dossiers">#</doc-anchor-trigger>
         <span>2.2.1. Configuration des Dossiers</span>
     </h4>
 </doc-anchor-target>
-<p>Le script définit un répertoire de téléchargement et des destinations d&#x27;extraction pour chaque ensemble de données.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">DOWNLOAD_PATH = os.path.expanduser(&quot;/downloads&quot;)</code></pre>
+<pre translate="no" class="language-python"><code v-pre class="language-python">DOWNLOAD_PATH = os.path.expanduser(&quot;./downloads&quot;)</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="222-téléchargement-via-curl">
+<doc-anchor-target id="222-sources-de-données-actuelles">
     <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#222-téléchargement-via-curl">#</doc-anchor-trigger>
-        <span>2.2.2. Téléchargement via curl</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#222-sources-de-données-actuelles">#</doc-anchor-trigger>
+        <span>2.2.2. Sources de Données Actuelles</span>
     </h4>
 </doc-anchor-target>
-<p>Chaque fichier est téléchargé via <code v-pre>curl</code> en utilisant l&#x27;URL spécifique du dataset.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">command = f'curl -L -o &quot;{file_path}&quot; &quot;{info[&quot;url&quot;]}&quot;'
+<pre translate="no" class="language-python"><code v-pre class="language-python">datasets = {
+    &quot;WHO-COVID-19-global-data.csv&quot;: {
+        &quot;url&quot;: &quot;https://srhdpeuwpubsa.blob.core.windows.net/whdh/COVID/WHO-COVID-19-global-data.csv&quot;,
+        &quot;extract_to&quot;: &quot;raw_data&quot;
+    }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="223-téléchargement-via-curl">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#223-téléchargement-via-curl">#</doc-anchor-trigger>
+        <span>2.2.3. Téléchargement via curl</span>
+    </h4>
+</doc-anchor-target>
+<p>Le fichier WHO COVID-19 est téléchargé directement depuis le serveur officiel de l&#x27;OMS :</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-python"><code v-pre class="language-python">command = f'curl -L -o &quot;{file_path}&quot; &quot;{info[&quot;url&quot;]}&quot;'
 subprocess.run(command, shell=True, check=True)</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="223-extraction-et-suppression-des-archives">
+<doc-anchor-target id="224-déplacement-vers-le-dossier-de-données">
     <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#223-extraction-et-suppression-des-archives">#</doc-anchor-trigger>
-        <span>2.2.3. Extraction et Suppression des Archives</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#224-déplacement-vers-le-dossier-de-données">#</doc-anchor-trigger>
+        <span>2.2.4. Déplacement vers le Dossier de Données</span>
     </h4>
 </doc-anchor-target>
-<p>Les fichiers ZIP sont extraits, et le fichier compressé est supprimé après extraction.</p>
+<p>Les fichiers sont déplacés vers le dossier <code v-pre>raw_data</code> après téléchargement :</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">with zipfile.ZipFile(file_path, 'r') as zip_ref:
-    zip_ref.extractall(extract_path)
-os.remove(file_path)</code></pre>
+<pre translate="no" class="language-python"><code v-pre class="language-python">os.rename(file_path, os.path.join(extract_path, filename))</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="3-nettoyage-et-prétraitement-des-données">
     <h2>
@@ -257,95 +267,164 @@ os.remove(file_path)</code></pre>
         <span>3.1. Chargement des Données</span>
     </h3>
 </doc-anchor-target>
-<p>Chaque fichier CSV est chargé en mémoire avec <code v-pre>pandas</code>.</p>
+<p>Les fichiers CSV sont chargés avec un encodage UTF-8 explicite :</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">data1 = pd.read_csv('data1/worldometer_coronavirus_daily_data.csv')
-data2 = pd.read_csv('data2/full_grouped.csv')
-data3 = pd.read_csv('data3/owid-monkeypox-data.csv')</code></pre>
+<pre translate="no" class="language-python"><code v-pre class="language-python">data1 = pd.read_csv('raw_data/WHO-COVID-19-global-data.csv', encoding='utf-8')
+data2 = pd.read_csv('raw_data/mpox-22-june.csv', encoding='utf-8')</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="32-standardisation-des-noms-de-colonnes">
+<doc-anchor-target id="32-définition-des-colonnes-finales">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#32-standardisation-des-noms-de-colonnes">#</doc-anchor-trigger>
-        <span>3.2. Standardisation des Noms de Colonnes</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#32-définition-des-colonnes-finales">#</doc-anchor-trigger>
+        <span>3.2. Définition des Colonnes Finales</span>
     </h3>
 </doc-anchor-target>
-<p>Les noms de colonnes sont convertis en minuscules et les espaces remplacés par des underscores.</p>
+<p>Les colonnes finales sont standardisées pour les deux ensembles de données :</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">data1.columns = data1.columns.str.lower().str.replace(' ', '_')</code></pre>
+<pre translate="no" class="language-python"><code v-pre class="language-python">data1_final_columns = [&quot;date&quot;, &quot;country&quot;, &quot;total_cases&quot;, &quot;new_cases&quot;, &quot;total_deaths&quot;, &quot;new_deaths&quot;]
+data2_final_columns = [&quot;date&quot;, &quot;country&quot;, &quot;total_cases&quot;, &quot;new_cases&quot;, &quot;total_deaths&quot;, &quot;new_deaths&quot;]</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="33-renommage-des-colonnes-clés">
+<doc-anchor-target id="33-standardisation-des-noms-de-colonnes">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#33-renommage-des-colonnes-clés">#</doc-anchor-trigger>
-        <span>3.3. Renommage des Colonnes Clés</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#33-standardisation-des-noms-de-colonnes">#</doc-anchor-trigger>
+        <span>3.3. Standardisation des Noms de Colonnes</span>
     </h3>
 </doc-anchor-target>
-<p>Les colonnes essentielles sont renommées pour assurer la cohérence entre les différents datasets.</p>
+<p>Les noms de colonnes sont convertis en minuscules et les espaces remplacés par des underscores :</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">data1.rename(columns={
-    &quot;cumulative_total_cases&quot;: &quot;total_cases&quot;,
-    &quot;daily_new_cases&quot;: &quot;new_cases&quot;,
-    &quot;cumulative_total_deaths&quot;: &quot;total_deaths&quot;,
-    &quot;daily_new_deaths&quot;: &quot;new_deaths&quot;
+<pre translate="no" class="language-python"><code v-pre class="language-python">data1.columns = data1.columns.str.lower().str.replace(' ', '_')
+data2.columns = data2.columns.str.lower().str.replace(' ', '_')</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="34-renommage-des-colonnes-clés">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#34-renommage-des-colonnes-clés">#</doc-anchor-trigger>
+        <span>3.4. Renommage des Colonnes Clés</span>
+    </h3>
+</doc-anchor-target>
+<doc-anchor-target id="341-données-covid-19-who">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#341-données-covid-19-who">#</doc-anchor-trigger>
+        <span>3.4.1. Données COVID-19 (WHO)</span>
+    </h4>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-python"><code v-pre class="language-python">data1.rename(columns={
+    &quot;date_reported&quot;: &quot;date&quot;,
+    &quot;country&quot;: &quot;country&quot;,
+    &quot;cumulative_cases&quot;: &quot;total_cases&quot;,
+    &quot;new_cases&quot;: &quot;new_cases&quot;,
+    &quot;cumulative_deaths&quot;: &quot;total_deaths&quot;,
+    &quot;new_deaths&quot;: &quot;new_deaths&quot;
 }, inplace=True)</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="34-gestion-des-valeurs-manquantes">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#34-gestion-des-valeurs-manquantes">#</doc-anchor-trigger>
-        <span>3.4. Gestion des Valeurs Manquantes</span>
-    </h3>
+<doc-anchor-target id="342-données-mpox">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#342-données-mpox">#</doc-anchor-trigger>
+        <span>3.4.2. Données MPOX</span>
+    </h4>
 </doc-anchor-target>
-<p>Toutes les valeurs <code v-pre>NaN</code> sont remplacées par <code v-pre>0</code>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">data1.fillna(0, inplace=True)
-data2.fillna(0, inplace=True)
-data3.fillna(0, inplace=True)</code></pre>
+<pre translate="no" class="language-python"><code v-pre class="language-python">data2.rename(columns={
+    &quot;date&quot;: &quot;date&quot;,
+    &quot;country&quot;: &quot;country&quot;,
+    &quot;total_conf_cases&quot;: &quot;total_cases&quot;,
+    &quot;new_conf_cases&quot;: &quot;new_cases&quot;,
+    &quot;total_conf_deaths&quot;: &quot;total_deaths&quot;,
+    &quot;new_conf_deaths&quot;: &quot;new_deaths&quot;
+}, inplace=True)</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="35-calcul-des-récupérations-quotidiennes">
+<doc-anchor-target id="35-traitement-des-dates">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#35-calcul-des-récupérations-quotidiennes">#</doc-anchor-trigger>
-        <span>3.5. Calcul des Récupérations Quotidiennes</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#35-traitement-des-dates">#</doc-anchor-trigger>
+        <span>3.5. Traitement des Dates</span>
     </h3>
 </doc-anchor-target>
-<p>Les récupérations quotidiennes sont calculées à partir des valeurs de récupération totale des jours précédents.</p>
+<p>Les dates MPOX sont converties en format datetime :</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">data1[&quot;Previous_Total_Cases&quot;] = data1[&quot;total_cases&quot;].shift(1).fillna(0)
-data1[&quot;total_recovered&quot;] = (data1[&quot;Previous_Total_Cases&quot;] + data1[&quot;new_cases&quot;]) - (data1[&quot;active_cases&quot;] + data1[&quot;total_deaths&quot;])
-data1[&quot;total_recovered&quot;] = data1[&quot;total_recovered&quot;].clip(lower=0)</code></pre>
+<pre translate="no" class="language-python"><code v-pre class="language-python">data2['date'] = pd.to_datetime(data2['date'])</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="36-séparation-et-filtrage-par-pays">
+<doc-anchor-target id="36-gestion-des-valeurs-manquantes">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#36-séparation-et-filtrage-par-pays">#</doc-anchor-trigger>
-        <span>3.6. Séparation et Filtrage par Pays</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#36-gestion-des-valeurs-manquantes">#</doc-anchor-trigger>
+        <span>3.6. Gestion des Valeurs Manquantes</span>
     </h3>
 </doc-anchor-target>
-<p>Chaque pays est isolé dans un fichier CSV temporaire.</p>
+<p>Toutes les valeurs <code v-pre>NaN</code> sont remplacées par <code v-pre>0</code> :</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">for country, group in data1.groupby(&quot;country&quot;):
+<pre translate="no" class="language-python"><code v-pre class="language-python">data1.fillna(0, inplace=True)
+data2.fillna(0, inplace=True)</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="37-traitement-par-pays-covid-19">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#37-traitement-par-pays-covid-19">#</doc-anchor-trigger>
+        <span>3.7. Traitement par Pays (COVID-19)</span>
+    </h3>
+</doc-anchor-target>
+<p>Pour assurer la cohérence des données COVID-19, un traitement par pays est effectué :</p>
+<doc-anchor-target id="371-séparation-par-pays">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#371-séparation-par-pays">#</doc-anchor-trigger>
+        <span>3.7.1. Séparation par Pays</span>
+    </h4>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-python"><code v-pre class="language-python">for country, group in data1.groupby(&quot;country&quot;):
     os.makedirs('tempfilter', exist_ok=True)
-    group.to_csv(f'tempfilter/{country}_data1_filtered.csv', index=False)</code></pre>
+    group.to_csv(f'tempfilter/{country}_data1_filtered.csv', index=False, encoding='utf-8')</code></pre>
 </doc-codeblock></div>
-<p>Chaque fichier est ensuite lu et retraité pour calculer les récupérations quotidiennes.</p>
+<doc-anchor-target id="372-rechargement-et-concaténation">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#372-rechargement-et-concaténation">#</doc-anchor-trigger>
+        <span>3.7.2. Rechargement et Concaténation</span>
+    </h4>
+</doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">dataf[&quot;Previous_Total_Recovery&quot;] = dataf[&quot;total_recovered&quot;].shift(1).fillna(0)
-dataf[&quot;daily_recovered&quot;] = (dataf[&quot;total_recovered&quot;] - dataf[&quot;Previous_Total_Recovery&quot;])</code></pre>
+<pre translate="no" class="language-python"><code v-pre class="language-python">all_datas = []
+for file_name in os.listdir('tempfilter'):
+    file_path = os.path.join('tempfilter', file_name)
+    try:
+        dataf = pd.read_csv(file_path, delimiter=',', encoding='utf-8')
+        all_datas.append(dataf)
+    except Exception as e:
+        print(e)
+
+data1 = pd.concat(all_datas)</code></pre>
 </doc-codeblock></div>
-<p>Enfin, les fichiers temporaires sont supprimés après traitement.</p>
+<doc-anchor-target id="373-nettoyage-des-fichiers-temporaires">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#373-nettoyage-des-fichiers-temporaires">#</doc-anchor-trigger>
+        <span>3.7.3. Nettoyage des Fichiers Temporaires</span>
+    </h4>
+</doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">for file_name in os.listdir(f'tempfilter'):
-    os.remove(os.path.join('tempfilter', file_name))
+<pre translate="no" class="language-python"><code v-pre class="language-python">for file_name in os.listdir('tempfilter'):
+    file_path = os.path.join('tempfilter', file_name)
+    os.remove(file_path)
 os.rmdir('tempfilter')</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="37-sélection-des-colonnes-finales">
+<doc-anchor-target id="38-sélection-des-colonnes-finales">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#37-sélection-des-colonnes-finales">#</doc-anchor-trigger>
-        <span>3.7. Sélection des Colonnes Finales</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#38-sélection-des-colonnes-finales">#</doc-anchor-trigger>
+        <span>3.8. Sélection des Colonnes Finales</span>
     </h3>
 </doc-anchor-target>
-<p>Chaque dataset est réduit aux colonnes pertinentes.</p>
+<p>Chaque dataset est réduit aux colonnes standardisées :</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">data1 = data1[[&quot;date&quot;, &quot;country&quot;, &quot;total_cases&quot;, &quot;new_cases&quot;, &quot;active_cases&quot;, &quot;total_deaths&quot;, &quot;new_deaths&quot;, &quot;total_recovered&quot;, &quot;daily_recovered&quot;]]
-data2 = data2[[&quot;date&quot;, &quot;country&quot;, &quot;total_cases&quot;, &quot;new_cases&quot;, &quot;active_cases&quot;, &quot;total_deaths&quot;, &quot;new_deaths&quot;, &quot;total_recovered&quot;, &quot;daily_recovered&quot;]]
-data3 = data3[[&quot;date&quot;, &quot;country&quot;, &quot;total_cases&quot;, &quot;new_cases&quot;, &quot;total_deaths&quot;, &quot;new_deaths&quot;]]</code></pre>
+<pre translate="no" class="language-python"><code v-pre class="language-python">data1 = data1[data1_final_columns]
+data2 = data2[data2_final_columns]</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="39-nettoyage-des-noms-de-pays">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#39-nettoyage-des-noms-de-pays">#</doc-anchor-trigger>
+        <span>3.9. Nettoyage des Noms de Pays</span>
+    </h3>
+</doc-anchor-target>
+<p>Correction des caractères spéciaux et des noms de pays problématiques :</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-python"><code v-pre class="language-python">data1.replace(&quot;Côte d'Ivoire&quot;, &quot;Cote d'Ivoire&quot;, inplace=True)
+data1.replace(&quot;Türkiye&quot;, &quot;Turkey&quot;, inplace=True)
+data1.replace(&quot;Curaçao&quot;, &quot;Curacao&quot;, inplace=True)
+data1.replace(&quot;Réunion&quot;, &quot;Reunion&quot;, inplace=True)
+data1.replace(&quot;Saint Barthélemy&quot;, &quot;Saint Barthélemy&quot;, inplace=True)</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="4-exportation-des-données-nettoyées">
     <h2>
@@ -353,28 +432,110 @@ data3 = data3[[&quot;date&quot;, &quot;country&quot;, &quot;total_cases&quot;, &
         <span>4. Exportation des Données Nettoyées</span>
     </h2>
 </doc-anchor-target>
-<p>Les datasets nettoyés sont sauvegardés dans un dossier <code v-pre>filtered/</code>.</p>
+<p>Les datasets nettoyés sont sauvegardés dans le dossier <code v-pre>filtered/</code> avec encodage UTF-8 :</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-python"><code v-pre class="language-python">os.makedirs('filtered', exist_ok=True)
-data1.to_csv('filtered/data1_filtered.csv', index=False)
-data2.to_csv('filtered/data2_filtered.csv', index=False)
-data3.to_csv('filtered/data3_filtered.csv', index=False)</code></pre>
+<pre translate="no" class="language-python"><code v-pre class="language-python">os.makedirs('filtered', exist_ok=True)
+data2.to_csv('filtered/mpox_filtered.csv', index=False, encoding='utf-8')
+data1.to_csv('filtered/covid_filtered.csv', index=False, encoding='utf-8')</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="5-conclusion">
+<doc-anchor-target id="5-avantages-de-la-nouvelle-approche">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#5-conclusion">#</doc-anchor-trigger>
-        <span>5. Conclusion</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#5-avantages-de-la-nouvelle-approche">#</doc-anchor-trigger>
+        <span>5. Avantages de la Nouvelle Approche</span>
     </h2>
 </doc-anchor-target>
-<p>Ce processus assure la collecte, l&#x27;extraction et le nettoyage des données avec standardisation des formats et des colonnes pour une analyse cohérente. Les datasets finaux sont prêts à être exploités pour la visualisation et l&#x27;analyse statistique.</p>
+<doc-anchor-target id="51-sources-officielles">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#51-sources-officielles">#</doc-anchor-trigger>
+        <span>5.1. Sources Officielles</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li><strong>Données COVID-19</strong> : Directement de l&#x27;OMS, garantissant l&#x27;authenticité</li>
+<li><strong>Données MPOX</strong> : Ensemble de données contrôlé et vérifié</li>
+</ul>
+<doc-anchor-target id="52-simplicité-et-fiabilité">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#52-simplicité-et-fiabilité">#</doc-anchor-trigger>
+        <span>5.2. Simplicité et Fiabilité</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li>Moins de dépendances externes (plus de Kaggle API)</li>
+<li>Processus de téléchargement plus direct</li>
+<li>Meilleur contrôle de la qualité des données</li>
+</ul>
+<doc-anchor-target id="53-performance-améliorée">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#53-performance-améliorée">#</doc-anchor-trigger>
+        <span>5.3. Performance Améliorée</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li>Moins de fichiers à traiter</li>
+<li>Processus ETL plus rapide</li>
+<li>Encodage UTF-8 cohérent</li>
+</ul>
+<doc-anchor-target id="54-maintenance-simplifiée">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#54-maintenance-simplifiée">#</doc-anchor-trigger>
+        <span>5.4. Maintenance Simplifiée</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li>Code plus simple et lisible</li>
+<li>Moins de points de défaillance</li>
+<li>Sources de données stables</li>
+</ul>
+<doc-anchor-target id="6-structure-des-données-finales">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#6-structure-des-données-finales">#</doc-anchor-trigger>
+        <span>6. Structure des Données Finales</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="61-covid-19-covid_filteredcsv">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#61-covid-19-covid_filteredcsv">#</doc-anchor-trigger>
+        <span>6.1. COVID-19 (<code v-pre>covid_filtered.csv</code>)</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li><strong>date</strong> : Date de rapport (AAAA-MM-JJ)</li>
+<li><strong>country</strong> : Nom du pays</li>
+<li><strong>total_cases</strong> : Cas cumulés confirmés</li>
+<li><strong>new_cases</strong> : Nouveaux cas du jour</li>
+<li><strong>total_deaths</strong> : Décès cumulés</li>
+<li><strong>new_deaths</strong> : Nouveaux décès du jour</li>
+</ul>
+<doc-anchor-target id="62-mpox-mpox_filteredcsv">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#62-mpox-mpox_filteredcsv">#</doc-anchor-trigger>
+        <span>6.2. MPOX (<code v-pre>mpox_filtered.csv</code>)</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li><strong>date</strong> : Date de rapport (AAAA-MM-JJ)</li>
+<li><strong>country</strong> : Nom du pays</li>
+<li><strong>total_cases</strong> : Cas cumulés confirmés</li>
+<li><strong>new_cases</strong> : Nouveaux cas du jour</li>
+<li><strong>total_deaths</strong> : Décès cumulés</li>
+<li><strong>new_deaths</strong> : Nouveaux décès du jour</li>
+</ul>
+<doc-anchor-target id="7-conclusion">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#7-conclusion">#</doc-anchor-trigger>
+        <span>7. Conclusion</span>
+    </h2>
+</doc-anchor-target>
+<p>Cette approche simplifiée assure une collecte de données plus fiable et un traitement plus efficace. L&#x27;utilisation de sources officielles comme l&#x27;OMS garantit la qualité et l&#x27;authenticité des données, tandis que la simplification du processus améliore la maintenance et les performances du système ETL.</p>
 
                                 
                                 <!-- Required only on API pages -->
                                 <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
                             </div>
-                            <footer class="clear-both">
+                            <footer id="retype-content-footer" class="clear-both">
                             
-                                <nav class="flex mt-14">
+                                <nav id="retype-nextprev" class="print:hidden flex mt-14">
                                     <div class="w-1/2">
                                         <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../rest/pour-commencer/installation/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
@@ -398,13 +559,13 @@ data3.to_csv('filtered/data3_filtered.csv', index=False)</code></pre>
                             </footer>
                         </main>
                 
-                        <div class="border-t dark:border-dark-650 pt-6 mb-8">
-                            <footer class="flex flex-wrap items-center justify-between">
-                                <div>
+                        <div id="retype-page-footer" class="print:border-none border-t dark:border-dark-650 pt-6 mb-8">
+                            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                                <div id="retype-footer-links" class="print:hidden">
                                     <ul class="flex flex-wrap items-center text-sm">
                                     </ul>
                                 </div>
-                                <div class="docs-copyright py-2 text-gray-500 dark:text-dark-350 text-sm leading-relaxed"></div>
+                                <div id="retype-copyright" class="print:justify-center docs-copyright py-2 text-gray-500 dark:text-dark-350 text-sm leading-relaxed"></div>
                             </footer>
                         </div>
                     </div>
@@ -431,7 +592,7 @@ data3.to_csv('filtered/data3_filtered.csv', index=False)</code></pre>
     </div>
 
 
-    <div id="docs-overlay-target"></div>
+    <div id="retype-overlay-target"></div>
 
     <script data-cfasync="false">window.__DOCS__ = { "title": "Data Processing", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
