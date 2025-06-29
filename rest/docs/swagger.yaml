@@ -26,11 +26,80 @@ components:
             properties:
                 id:
                     type: integer
-                    format: int32
+                    format: int64
                     description: Unique identifier
                 date:
                     type: string
-                    format: date
+                    description: Date of the record
+                country:
+                    type: string
+                    description: Country name
+                total_cases:
+                    type: integer
+                    format: int64
+                    description: Total confirmed cases
+                new_cases:
+                    type: number
+                    format: float
+                    description: New cases on this date
+                total_deaths:
+                    type: integer
+                    format: int64
+                    description: Total deaths
+                new_deaths:
+                    type: number
+                    format: float
+                    description: New deaths on this date
+            required:
+                - date
+                - country
+                - total_cases
+                - new_cases
+                - total_deaths
+                - new_deaths
+
+        MpoxData:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                    description: Unique identifier
+                date:
+                    type: string
+                    description: Date of the record
+                country:
+                    type: string
+                    description: Country name
+                total_cases:
+                    type: integer
+                    format: int64
+                    description: Total confirmed cases
+                new_cases:
+                    type: integer
+                    format: int64
+                    description: New cases on this date
+                total_deaths:
+                    type: integer
+                    format: int64
+                    description: Total deaths
+                new_deaths:
+                    type: integer
+                    format: int64
+                    description: New deaths on this date
+            required:
+                - date
+                - country
+                - total_cases
+                - new_cases
+                - total_deaths
+                - new_deaths
+
+        CovidDataInput:
+            type: object
+            properties:
+                date:
+                    type: string
                     description: Date of the record
                 country:
                     type: string
@@ -41,42 +110,25 @@ components:
                 new_cases:
                     type: integer
                     description: New cases on this date
-                active_cases:
-                    type: integer
-                    description: Currently active cases
                 total_deaths:
                     type: integer
                     description: Total deaths
                 new_deaths:
                     type: integer
                     description: New deaths on this date
-                total_recovered:
-                    type: integer
-                    description: Total recovered cases
-                daily_recovered:
-                    type: integer
-                    description: New recoveries on this date
             required:
                 - date
                 - country
                 - total_cases
                 - new_cases
-                - active_cases
                 - total_deaths
                 - new_deaths
-                - total_recovered
-                - daily_recovered
 
-        MpoxData:
+        MpoxDataInput:
             type: object
             properties:
-                id:
-                    type: integer
-                    format: int32
-                    description: Unique identifier
                 date:
                     type: string
-                    format: date
                     description: Date of the record
                 country:
                     type: string
@@ -127,18 +179,30 @@ components:
             type: object
             properties:
                 total_cases:
-                    type: string
+                    type: integer
+                    format: int64
                     description: Total confirmed cases worldwide
                 total_deaths:
-                    type: string
+                    type: integer
+                    format: int64
                     description: Total deaths worldwide
-                total_recovered:
-                    type: string
-                    description: Total recovered cases worldwide
             required:
                 - total_cases
                 - total_deaths
-                - total_recovered
+
+        MpoxSummary:
+            type: object
+            properties:
+                country:
+                    type: string
+                    description: Country name
+                latest_cases:
+                    type: integer
+                    format: int64
+                    description: Latest total cases for the country
+            required:
+                - country
+                - latest_cases
 
         StatsSummary:
             type: object
@@ -148,19 +212,29 @@ components:
                     properties:
                         total_cases:
                             type: integer
+                            format: int64
                             description: Total COVID cases
                         total_deaths:
                             type: integer
+                            format: int64
                             description: Total COVID deaths
+                    required:
+                        - total_cases
+                        - total_deaths
                 mpox:
                     type: object
                     properties:
                         total_cases:
                             type: integer
+                            format: int64
                             description: Total MPOX cases
                         total_deaths:
                             type: integer
+                            format: int64
                             description: Total MPOX deaths
+                    required:
+                        - total_cases
+                        - total_deaths
             required:
                 - covid
                 - mpox
@@ -240,7 +314,7 @@ paths:
     /mpox/public/summary:
         get:
             summary: Get MPOX summary by country
-            description: Returns MPOX summary data grouped by country
+            description: Returns MPOX summary data grouped by country (top 5 countries by cases)
             tags:
                 - Public MPOX Data
             responses:
@@ -251,12 +325,7 @@ paths:
                             schema:
                                 type: array
                                 items:
-                                    type: object
-                                    properties:
-                                        country:
-                                            type: string
-                                        latest_cases:
-                                            type: integer
+                                    $ref: "#/components/schemas/MpoxSummary"
                 "500":
                     description: Server error
                     content:
@@ -320,37 +389,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            type: object
-                            properties:
-                                date:
-                                    type: string
-                                    format: date
-                                country:
-                                    type: string
-                                total_cases:
-                                    type: integer
-                                new_cases:
-                                    type: integer
-                                active_cases:
-                                    type: integer
-                                total_deaths:
-                                    type: integer
-                                new_deaths:
-                                    type: integer
-                                total_recovered:
-                                    type: integer
-                                daily_recovered:
-                                    type: integer
-                            required:
-                                - date
-                                - country
-                                - total_cases
-                                - new_cases
-                                - active_cases
-                                - total_deaths
-                                - new_deaths
-                                - total_recovered
-                                - daily_recovered
+                            $ref: "#/components/schemas/CovidDataInput"
             responses:
                 "201":
                     description: Data added successfully
@@ -391,37 +430,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            type: object
-                            properties:
-                                date:
-                                    type: string
-                                    format: date
-                                country:
-                                    type: string
-                                total_cases:
-                                    type: integer
-                                new_cases:
-                                    type: integer
-                                active_cases:
-                                    type: integer
-                                total_deaths:
-                                    type: integer
-                                new_deaths:
-                                    type: integer
-                                total_recovered:
-                                    type: integer
-                                daily_recovered:
-                                    type: integer
-                            required:
-                                - date
-                                - country
-                                - total_cases
-                                - new_cases
-                                - active_cases
-                                - total_deaths
-                                - new_deaths
-                                - total_recovered
-                                - daily_recovered
+                            $ref: "#/components/schemas/CovidDataInput"
             responses:
                 "200":
                     description: Data updated successfully
@@ -532,28 +541,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            type: object
-                            properties:
-                                date:
-                                    type: string
-                                    format: date
-                                country:
-                                    type: string
-                                total_cases:
-                                    type: integer
-                                new_cases:
-                                    type: integer
-                                total_deaths:
-                                    type: integer
-                                new_deaths:
-                                    type: integer
-                            required:
-                                - date
-                                - country
-                                - total_cases
-                                - new_cases
-                                - total_deaths
-                                - new_deaths
+                            $ref: "#/components/schemas/MpoxDataInput"
             responses:
                 "201":
                     description: Data added successfully
@@ -594,28 +582,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            type: object
-                            properties:
-                                date:
-                                    type: string
-                                    format: date
-                                country:
-                                    type: string
-                                total_cases:
-                                    type: integer
-                                new_cases:
-                                    type: integer
-                                total_deaths:
-                                    type: integer
-                                new_deaths:
-                                    type: integer
-                            required:
-                                - date
-                                - country
-                                - total_cases
-                                - new_cases
-                                - total_deaths
-                                - new_deaths
+                            $ref: "#/components/schemas/MpoxDataInput"
             responses:
                 "200":
                     description: Data updated successfully

@@ -109,11 +109,8 @@ router.post(
                 country,
                 total_cases,
                 new_cases,
-                active_cases,
                 total_deaths,
                 new_deaths,
-                total_recovered,
-                daily_recovered,
             } = req.body;
 
             await prisma.covidData.create({
