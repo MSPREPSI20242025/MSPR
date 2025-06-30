@@ -1,0 +1,666 @@
+openapi: 3.0.0
+info:
+    title: COVID and MPOX Data API
+    description: API for accessing and managing COVID-19 and MPOX epidemic data
+    version: 1.0.0
+    contact:
+        email: api-support@yourdomain.com
+
+servers:
+    - url: https://api.yourdomain.com/api
+      description: Production server
+    - url: https://staging-api.yourdomain.com/api
+      description: Staging server
+
+components:
+    securitySchemes:
+        BearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: token
+            description: Enter the API token as a bearer token
+
+    schemas:
+        CovidData:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                    description: Unique identifier
+                date:
+                    type: string
+                    description: Date of the record
+                country:
+                    type: string
+                    description: Country name
+                total_cases:
+                    type: integer
+                    format: int64
+                    description: Total confirmed cases
+                new_cases:
+                    type: number
+                    format: float
+                    description: New cases on this date
+                total_deaths:
+                    type: integer
+                    format: int64
+                    description: Total deaths
+                new_deaths:
+                    type: number
+                    format: float
+                    description: New deaths on this date
+            required:
+                - date
+                - country
+                - total_cases
+                - new_cases
+                - total_deaths
+                - new_deaths
+
+        MpoxData:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                    description: Unique identifier
+                date:
+                    type: string
+                    description: Date of the record
+                country:
+                    type: string
+                    description: Country name
+                total_cases:
+                    type: integer
+                    format: int64
+                    description: Total confirmed cases
+                new_cases:
+                    type: integer
+                    format: int64
+                    description: New cases on this date
+                total_deaths:
+                    type: integer
+                    format: int64
+                    description: Total deaths
+                new_deaths:
+                    type: integer
+                    format: int64
+                    description: New deaths on this date
+            required:
+                - date
+                - country
+                - total_cases
+                - new_cases
+                - total_deaths
+                - new_deaths
+
+        CovidDataInput:
+            type: object
+            properties:
+                date:
+                    type: string
+                    description: Date of the record
+                country:
+                    type: string
+                    description: Country name
+                total_cases:
+                    type: integer
+                    description: Total confirmed cases
+                new_cases:
+                    type: integer
+                    description: New cases on this date
+                total_deaths:
+                    type: integer
+                    description: Total deaths
+                new_deaths:
+                    type: integer
+                    description: New deaths on this date
+            required:
+                - date
+                - country
+                - total_cases
+                - new_cases
+                - total_deaths
+                - new_deaths
+
+        MpoxDataInput:
+            type: object
+            properties:
+                date:
+                    type: string
+                    description: Date of the record
+                country:
+                    type: string
+                    description: Country name
+                total_cases:
+                    type: integer
+                    description: Total confirmed cases
+                new_cases:
+                    type: integer
+                    description: New cases on this date
+                total_deaths:
+                    type: integer
+                    description: Total deaths
+                new_deaths:
+                    type: integer
+                    description: New deaths on this date
+            required:
+                - date
+                - country
+                - total_cases
+                - new_cases
+                - total_deaths
+                - new_deaths
+
+        SuccessResponse:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                    description: Whether the operation was successful
+                message:
+                    type: string
+                    description: Success message
+            required:
+                - success
+                - message
+
+        ErrorResponse:
+            type: object
+            properties:
+                error:
+                    type: string
+                    description: Error message
+            required:
+                - error
+
+        CovidTotals:
+            type: object
+            properties:
+                total_cases:
+                    type: integer
+                    format: int64
+                    description: Total confirmed cases worldwide
+                total_deaths:
+                    type: integer
+                    format: int64
+                    description: Total deaths worldwide
+            required:
+                - total_cases
+                - total_deaths
+
+        MpoxSummary:
+            type: object
+            properties:
+                country:
+                    type: string
+                    description: Country name
+                latest_cases:
+                    type: integer
+                    format: int64
+                    description: Latest total cases for the country
+            required:
+                - country
+                - latest_cases
+
+        StatsSummary:
+            type: object
+            properties:
+                covid:
+                    type: object
+                    properties:
+                        total_cases:
+                            type: integer
+                            format: int64
+                            description: Total COVID cases
+                        total_deaths:
+                            type: integer
+                            format: int64
+                            description: Total COVID deaths
+                    required:
+                        - total_cases
+                        - total_deaths
+                mpox:
+                    type: object
+                    properties:
+                        total_cases:
+                            type: integer
+                            format: int64
+                            description: Total MPOX cases
+                        total_deaths:
+                            type: integer
+                            format: int64
+                            description: Total MPOX deaths
+                    required:
+                        - total_cases
+                        - total_deaths
+            required:
+                - covid
+                - mpox
+
+paths:
+    /covid/public/latest:
+        get:
+            summary: Get latest COVID data
+            description: Returns the 10 most recent COVID data entries
+            tags:
+                - Public COVID Data
+            responses:
+                "200":
+                    description: A list of the latest COVID data entries
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/CovidData"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    /covid/public/country/{country}:
+        get:
+            summary: Get COVID data for a specific country
+            description: Returns the last 30 days of COVID data for a specific country
+            tags:
+                - Public COVID Data
+            parameters:
+                - name: country
+                  in: path
+                  required: true
+                  description: Country name
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: COVID data for the specified country
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/CovidData"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    /covid/public/totals:
+        get:
+            summary: Get global COVID totals
+            description: Returns global COVID totals from the most recent data
+            tags:
+                - Public COVID Data
+            responses:
+                "200":
+                    description: Global COVID totals
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/CovidTotals"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    /mpox/public/summary:
+        get:
+            summary: Get MPOX summary by country
+            description: Returns MPOX summary data grouped by country (top 5 countries by cases)
+            tags:
+                - Public MPOX Data
+            responses:
+                "200":
+                    description: MPOX summary by country
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/MpoxSummary"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    /covid/data:
+        get:
+            summary: Get all COVID data
+            description: Returns COVID data with optional filtering by country
+            tags:
+                - Protected COVID Data
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: country
+                  in: query
+                  required: false
+                  description: Filter by country name
+                  schema:
+                      type: string
+                - name: limit
+                  in: query
+                  required: false
+                  description: Maximum number of records to return
+                  schema:
+                      type: integer
+                      default: 100
+            responses:
+                "200":
+                    description: List of COVID data entries
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/CovidData"
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+        post:
+            summary: Add new COVID data
+            description: Creates a new COVID data entry
+            tags:
+                - Protected COVID Data
+            security:
+                - BearerAuth: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CovidDataInput"
+            responses:
+                "201":
+                    description: Data added successfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SuccessResponse"
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    /covid/data/{id}:
+        put:
+            summary: Update COVID data
+            description: Updates an existing COVID data entry by ID
+            tags:
+                - Protected COVID Data
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: ID of the COVID data entry
+                  schema:
+                      type: integer
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CovidDataInput"
+            responses:
+                "200":
+                    description: Data updated successfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SuccessResponse"
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+        delete:
+            summary: Delete COVID data
+            description: Deletes a COVID data entry by ID
+            tags:
+                - Protected COVID Data
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: ID of the COVID data entry
+                  schema:
+                      type: integer
+            responses:
+                "200":
+                    description: Data deleted successfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SuccessResponse"
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    /mpox/data:
+        get:
+            summary: Get all MPOX data
+            description: Returns MPOX data with optional filtering by country
+            tags:
+                - Protected MPOX Data
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: country
+                  in: query
+                  required: false
+                  description: Filter by country name
+                  schema:
+                      type: string
+                - name: limit
+                  in: query
+                  required: false
+                  description: Maximum number of records to return
+                  schema:
+                      type: integer
+                      default: 100
+            responses:
+                "200":
+                    description: List of MPOX data entries
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/MpoxData"
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+        post:
+            summary: Add new MPOX data
+            description: Creates a new MPOX data entry
+            tags:
+                - Protected MPOX Data
+            security:
+                - BearerAuth: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/MpoxDataInput"
+            responses:
+                "201":
+                    description: Data added successfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SuccessResponse"
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    /mpox/data/{id}:
+        put:
+            summary: Update MPOX data
+            description: Updates an existing MPOX data entry by ID
+            tags:
+                - Protected MPOX Data
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: ID of the MPOX data entry
+                  schema:
+                      type: integer
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/MpoxDataInput"
+            responses:
+                "200":
+                    description: Data updated successfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SuccessResponse"
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+        delete:
+            summary: Delete MPOX data
+            description: Deletes a MPOX data entry by ID
+            tags:
+                - Protected MPOX Data
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: ID of the MPOX data entry
+                  schema:
+                      type: integer
+            responses:
+                "200":
+                    description: Data deleted successfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SuccessResponse"
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    /stats/summary:
+        get:
+            summary: Get statistics summary
+            description: Returns summary statistics for both COVID and MPOX
+            tags:
+                - Statistics
+            security:
+                - BearerAuth: []
+            responses:
+                "200":
+                    description: Statistics summary
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/StatsSummary"
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "500":
+                    description: Server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
