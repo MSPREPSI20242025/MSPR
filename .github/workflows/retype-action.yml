@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - main61
+            - main62
 
 jobs:
     publish:
