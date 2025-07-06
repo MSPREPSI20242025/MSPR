@@ -1,25 +1,25 @@
-# PostgreSQL with custom configuration
+# PostgreSQL avec configuration personnalisée
 FROM postgres:16-alpine
 
-# Install security updates
+# Installer les mises à jour de sécurité
 RUN apk update && apk upgrade
 
-# Copy custom configuration
+# Copier la configuration PostgreSQL personnalisée
 COPY infrastructure/docker/postgres/postgresql.conf /etc/postgresql/postgresql.conf
 COPY infrastructure/docker/postgres/pg_hba.conf /etc/postgresql/pg_hba.conf
 
-# Copy initialization scripts
+# Copier les scripts d'initialisation
 COPY infrastructure/docker/postgres/init-scripts/ /docker-entrypoint-initdb.d/
 
-# Set custom configuration
+# Variables d'environnement
 ENV POSTGRES_INITDB_ARGS="--auth-host=md5"
 
-# Health check
+# Vérification de santé
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD pg_isready -U $POSTGRES_USER -d $POSTGRES_DB
 
-# Expose port
+# Exposer le port
 EXPOSE 5432
 
-# Use custom configuration
+# Utiliser la configuration PostgreSQL standard
 CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]

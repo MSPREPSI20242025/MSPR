@@ -9,14 +9,14 @@ services:
         container_name: mspr-postgres
         environment:
             POSTGRES_DB: ${POSTGRES_DB:-mspr}
-            POSTGRES_USER: ${POSTGRES_USER:-mspr_user}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mspr_password}
+            POSTGRES_USER: ${POSTGRES_USER:-mspr}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mspr61}
             POSTGRES_INITDB_ARGS: "--auth-host=md5"
         volumes:
             - postgres_data:/var/lib/postgresql/data
             - postgres_logs:/var/log/postgresql
         ports:
-            - "${POSTGRES_PORT:-5432}:5432"
+            - "${POSTGRES_PORT:-5455}:5432"
         networks:
             - mspr-network
         restart: unless-stopped
@@ -24,7 +24,7 @@ services:
             test:
                 [
                     "CMD-SHELL",
-                    "pg_isready -U ${POSTGRES_USER:-mspr_user} -d ${POSTGRES_DB:-mspr}",
+                    "pg_isready -U ${POSTGRES_USER:-mspr} -d ${POSTGRES_DB:-mspr}",
                 ]
             interval: 30s
             timeout: 10s
@@ -40,8 +40,8 @@ services:
         environment:
             NODE_ENV: ${NODE_ENV:-development}
             PORT: ${BACKEND_PORT:-3001}
-            DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-mspr_user}:${POSTGRES_PASSWORD:-mspr_password}@postgres:5432/${POSTGRES_DB:-mspr}}
-            API_TOKEN: ${API_TOKEN:-development-token}
+            DATABASE_URL: postgresql://${POSTGRES_USER:-mspr}:${POSTGRES_PASSWORD:-mspr61}@postgres:5432/${POSTGRES_DB:-mspr}
+            API_TOKEN: ${API_TOKEN:-votre-token-api-securise-ici}
             CLUSTER_NAME: ${CLUSTER_NAME:-development}
             CLUSTER_FEATURES: ${CLUSTER_FEATURES:-api_technical,dataviz,etl}
             CLUSTER_LANGUAGES: ${CLUSTER_LANGUAGES:-en}
@@ -113,7 +113,7 @@ services:
             dockerfile: infrastructure/docker/Dockerfile.etl
         container_name: mspr-etl
         environment:
-            DATABASE_URL: postgresql://${POSTGRES_USER:-mspr_user}:${POSTGRES_PASSWORD:-mspr_password}@postgres:5432/${POSTGRES_DB:-mspr}
+            DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-mspr}:${POSTGRES_PASSWORD:-mspr61}@postgres:5432/${POSTGRES_DB:-mspr}}
             CLUSTER_NAME: ${CLUSTER_NAME:-development}
             ETL_SCHEDULE: ${ETL_SCHEDULE:-0 2 * * *} # Daily at 2 AM
         depends_on:
