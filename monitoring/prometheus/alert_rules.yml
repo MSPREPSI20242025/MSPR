@@ -1,0 +1,248 @@
+# Prometheus alerting rules for MSPR
+groups:
+  - name: mspr.api.alerts
+    rules:
+      # High API response time
+      - alert: HighAPIResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{service="backend"}[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: backend
+        annotations:
+          summary: "High API response time detected"
+          description: "95th percentile API response time is {{ $value }}s, which is above the 1s threshold"
+
+      # High error rate
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{service="backend",status=~"5.."}[5m]) / rate(http_requests_total{service="backend"}[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          service: backend
+        annotations:
+          summary: "High error rate detected"
+          description: "API error rate is {{ $value | humanizePercentage }}, which is above the 5% threshold"
+
+      # API service down
+      - alert: APIServiceDown
+        expr: up{service="backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: backend
+        annotations:
+          summary: "API service is down"
+          description: "The backend API service has been down for more than 1 minute"
+
+      # Low API throughput
+      - alert: LowAPIThroughput
+        expr: rate(http_requests_total{service="backend"}[5m]) < 10
+        for: 10m
+        labels:
+          severity: warning
+          service: backend
+        annotations:
+          summary: "Low API throughput"
+          description: "API throughput is {{ $value }} requests/second, which is below the expected threshold"
+
+  - name: mspr.database.alerts
+    rules:
+      # Database connection issues
+      - alert: DatabaseConnectionHigh
+        expr: pg_stat_database_numbackends / pg_settings_max_connections * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "High database connection usage"
+          description: "Database connection usage is at {{ $value }}%, which is above the 80% threshold"
+
+      # Database slow queries
+      - alert: DatabaseSlowQueries
+        expr: pg_stat_statements_mean_time_ms > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "Slow database queries detected"
+          description: "Average query time is {{ $value }}ms, which is above the 1000ms threshold"
+
+      # Database service down
+      - alert: DatabaseServiceDown
+        expr: up{service="database"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: database
+        annotations:
+          summary: "Database service is down"
+          description: "The PostgreSQL database service has been down for more than 1 minute"
+
+      # Database disk usage
+      - alert: DatabaseDiskUsageHigh
+        expr: (node_filesystem_size_bytes{mountpoint="/var/lib/postgresql"} - node_filesystem_free_bytes{mountpoint="/var/lib/postgresql"}) / node_filesystem_size_bytes{mountpoint="/var/lib/postgresql"} * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "High database disk usage"
+          description: "Database disk usage is at {{ $value }}%, which is above the 85% threshold"
+
+  - name: mspr.system.alerts
+    rules:
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}% on instance {{ $labels.instance }}"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value }}% on instance {{ $labels.instance }}"
+
+      # High disk usage
+      - alert: HighDiskUsage
+        expr: (1 - (node_filesystem_free_bytes / node_filesystem_size_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High disk usage detected"
+          description: "Disk usage is {{ $value }}% on instance {{ $labels.instance }} for filesystem {{ $labels.mountpoint }}"
+
+      # Instance down
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "Instance is down"
+          description: "Instance {{ $labels.instance }} has been down for more than 1 minute"
+
+  - name: mspr.frontend.alerts
+    rules:
+      # Frontend service down
+      - alert: FrontendServiceDown
+        expr: up{service="frontend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: frontend
+        annotations:
+          summary: "Frontend service is down"
+          description: "The frontend service has been down for more than 1 minute"
+
+      # High frontend response time
+      - alert: HighFrontendResponseTime
+        expr: probe_duration_seconds{service="healthcheck"} > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: frontend
+        annotations:
+          summary: "High frontend response time"
+          description: "Frontend response time is {{ $value }}s, which is above the 5s threshold"
+
+  - name: mspr.security.alerts
+    rules:
+      # High rate of authentication failures
+      - alert: HighAuthFailureRate
+        expr: rate(http_requests_total{status="401",service="backend"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "High authentication failure rate"
+          description: "Authentication failure rate is {{ $value }} failures/second, which may indicate a brute force attack"
+
+      # Suspicious API access patterns
+      - alert: SuspiciousAPIAccess
+        expr: rate(http_requests_total{service="backend"}[1m]) > 100
+        for: 2m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "Suspicious API access pattern detected"
+          description: "API request rate is {{ $value }} requests/second, which may indicate abuse or DDoS attack"
+
+  - name: mspr.gdpr.alerts
+    rules:
+      # GDPR data retention violation (France cluster only)
+      - alert: GDPRDataRetentionViolation
+        expr: time() - mspr_data_oldest_record_timestamp{cluster="france"} > 7776000 # 90 days in seconds
+        for: 1h
+        labels:
+          severity: critical
+          service: gdpr
+          cluster: france
+        annotations:
+          summary: "GDPR data retention violation detected"
+          description: "Data older than 90 days detected in France cluster, which violates GDPR retention policy"
+
+      # High volume of data subject requests
+      - alert: HighDataSubjectRequestVolume
+        expr: rate(mspr_gdpr_requests_total{cluster="france"}[1h]) > 10
+        for: 1h
+        labels:
+          severity: warning
+          service: gdpr
+          cluster: france
+        annotations:
+          summary: "High volume of data subject requests"
+          description: "Data subject request rate is {{ $value }} requests/hour, which is unusually high"
+
+  - name: mspr.business.alerts
+    rules:
+      # Data processing pipeline failure
+      - alert: ETLPipelineFailure
+        expr: increase(mspr_etl_failures_total[1h]) > 0
+        for: 5m
+        labels:
+          severity: critical
+          service: etl
+        annotations:
+          summary: "ETL pipeline failure detected"
+          description: "ETL pipeline has failed {{ $value }} times in the last hour"
+
+      # Data freshness issue
+      - alert: DataFreshnessIssue
+        expr: time() - mspr_data_last_update_timestamp > 86400 # 24 hours
+        for: 1h
+        labels:
+          severity: warning
+          service: data
+        annotations:
+          summary: "Data freshness issue detected"
+          description: "Data has not been updated for more than 24 hours"
+
+      # Low data quality score
+      - alert: LowDataQuality
+        expr: mspr_data_quality_score < 0.8
+        for: 15m
+        labels:
+          severity: warning
+          service: data
+        annotations:
+          summary: "Low data quality detected"
+          description: "Data quality score is {{ $value }}, which is below the 0.8 threshold"

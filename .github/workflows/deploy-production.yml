@@ -1,0 +1,500 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      cluster:
+        description: 'Cluster to deploy to'
+        required: true
+        default: 'us'
+        type: choice
+        options:
+          - us
+          - france
+          - switzerland
+      skip_backup:
+        description: 'Skip database backup'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '20'
+  PYTHON_VERSION: '3.11'
+  DOCKER_REGISTRY: ghcr.io
+  IMAGE_NAME: mspr
+
+jobs:
+  # Pre-deployment checks
+  pre-deployment-checks:
+    name: Pre-Deployment Checks
+    runs-on: ubuntu-latest
+    outputs:
+      deploy-us: ${{ steps.check.outputs.deploy-us }}
+      deploy-france: ${{ steps.check.outputs.deploy-france }}
+      deploy-switzerland: ${{ steps.check.outputs.deploy-switzerland }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check deployment conditions
+        id: check
+        run: |
+          # Determine which clusters to deploy to
+          if [ "${{ github.event.inputs.cluster }}" == "us" ] || [ "${{ github.event.inputs.cluster }}" == "" ]; then
+            echo "deploy-us=true" >> $GITHUB_OUTPUT
+          fi
+          
+          if [ "${{ github.event.inputs.cluster }}" == "france" ] || [ "${{ github.event.inputs.cluster }}" == "" ]; then
+            echo "deploy-france=true" >> $GITHUB_OUTPUT
+          fi
+          
+          if [ "${{ github.event.inputs.cluster }}" == "switzerland" ] || [ "${{ github.event.inputs.cluster }}" == "" ]; then
+            echo "deploy-switzerland=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run pre-deployment security check
+        run: |
+          # Check for any critical security issues
+          echo "Running security checks..."
+          
+          # Check for secrets in code
+          if grep -r "password\|secret\|key" --include="*.js" --include="*.ts" --include="*.py" . | grep -v node_modules | grep -v ".git" | grep -v "example" | grep -v "test"; then
+            echo "WARNING: Potential secrets found in code"
+          fi
+
+      - name: Validate production configuration
+        run: |
+          # Ensure production configurations are valid
+          if [ ! -f ".env.example" ]; then
+            echo "ERROR: .env.example not found"
+            exit 1
+          fi
+          
+          # Check for required production environment variables
+          required_vars=("POSTGRES_PASSWORD" "API_TOKEN" "JWT_SECRET")
+          for var in "${required_vars[@]}"; do
+            if [ -z "${!var}" ]; then
+              echo "ERROR: Required environment variable $var not set"
+              exit 1
+            fi
+          done
+
+  # Build and push production images
+  build-and-push-production:
+    name: Build Production Images
+    runs-on: ubuntu-latest
+    needs: pre-deployment-checks
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+    strategy:
+      matrix:
+        service: [frontend, backend, postgres, etl]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.service }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=raw,value=production
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./infrastructure/docker/Dockerfile.${{ matrix.service }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+
+  # Deploy to US Production
+  deploy-us-production:
+    name: Deploy to US Production
+    runs-on: ubuntu-latest
+    needs: [pre-deployment-checks, build-and-push-production]
+    if: needs.pre-deployment-checks.outputs.deploy-us == 'true'
+    environment:
+      name: production-us
+      url: https://us.mspr.example.com
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup production environment
+        run: |
+          # Create production environment configuration
+          cat > .env.production << EOF
+          NODE_ENV=production
+          CLUSTER_NAME=us
+          CLUSTER_FEATURES=api_technical,dataviz,etl
+          CLUSTER_LANGUAGES=en
+          
+          # Database
+          POSTGRES_DB=mspr_production
+          POSTGRES_USER=mspr_production_user
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD_PRODUCTION }}
+          
+          # API
+          API_TOKEN=${{ secrets.API_TOKEN_PRODUCTION }}
+          JWT_SECRET=${{ secrets.JWT_SECRET_PRODUCTION }}
+          SESSION_SECRET=${{ secrets.SESSION_SECRET_PRODUCTION }}
+          
+          # Services
+          FRONTEND_PORT=3000
+          BACKEND_PORT=3001
+          NEXT_PUBLIC_API_URL=https://us-api.mspr.example.com
+          
+          # Security
+          HTTPS_ENABLED=true
+          SECURE_COOKIES=true
+          
+          # Performance optimization for US cluster
+          HIGH_VOLUME_MODE=true
+          PERFORMANCE_OPTIMIZATION=true
+          
+          # Monitoring
+          ENABLE_MONITORING=true
+          LOG_LEVEL=info
+          
+          # Backup
+          BACKUP_SCHEDULE=0 2 * * *
+          BACKUP_RETENTION_DAYS=30
+          EOF
+
+      - name: Create database backup
+        if: github.event.inputs.skip_backup != 'true'
+        run: |
+          # Copy environment file
+          cp .env.production .env.us
+          
+          # Run backup script
+          chmod +x infrastructure/scripts/backup.sh
+          ./infrastructure/scripts/backup.sh --cluster us --type full
+
+      - name: Deploy to production
+        run: |
+          # Run deployment script
+          chmod +x infrastructure/scripts/deploy.sh
+          ./infrastructure/scripts/deploy.sh --cluster us --environment production
+
+      - name: Run production smoke tests
+        run: |
+          # Wait for deployment to complete
+          sleep 90
+          
+          # Test API health
+          curl -f ${{ secrets.PRODUCTION_US_API_URL }}/health
+          
+          # Test frontend
+          curl -f ${{ secrets.PRODUCTION_US_FRONTEND_URL }}/
+          
+          # Test API endpoints
+          curl -f -H "Authorization: Bearer ${{ secrets.API_TOKEN_PRODUCTION }}" ${{ secrets.PRODUCTION_US_API_URL }}/api/covid
+          curl -f -H "Authorization: Bearer ${{ secrets.API_TOKEN_PRODUCTION }}" ${{ secrets.PRODUCTION_US_API_URL }}/api/mpox
+
+      - name: Notify deployment status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#production-deployments'
+          text: 'US Production deployment: ${{ job.status }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+  # Deploy to France Production
+  deploy-france-production:
+    name: Deploy to France Production
+    runs-on: ubuntu-latest
+    needs: [pre-deployment-checks, build-and-push-production]
+    if: needs.pre-deployment-checks.outputs.deploy-france == 'true'
+    environment:
+      name: production-france
+      url: https://france.mspr.example.com
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup production environment
+        run: |
+          # Create production environment configuration
+          cat > .env.production << EOF
+          NODE_ENV=production
+          CLUSTER_NAME=france
+          CLUSTER_FEATURES=dataviz,etl
+          CLUSTER_LANGUAGES=fr
+          
+          # Database
+          POSTGRES_DB=mspr_production_france
+          POSTGRES_USER=mspr_production_france_user
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD_PRODUCTION_FRANCE }}
+          
+          # API
+          API_TOKEN=${{ secrets.API_TOKEN_PRODUCTION_FRANCE }}
+          JWT_SECRET=${{ secrets.JWT_SECRET_PRODUCTION_FRANCE }}
+          SESSION_SECRET=${{ secrets.SESSION_SECRET_PRODUCTION_FRANCE }}
+          
+          # Services
+          FRONTEND_PORT=3000
+          BACKEND_PORT=3001
+          NEXT_PUBLIC_API_URL=https://france-api.mspr.example.com
+          
+          # Security
+          HTTPS_ENABLED=true
+          SECURE_COOKIES=true
+          
+          # GDPR compliance
+          GDPR_COMPLIANCE=true
+          DATA_RETENTION_DAYS=90
+          GDPR_CONTACT_EMAIL=privacy@mspr.example.com
+          
+          # Monitoring
+          ENABLE_MONITORING=true
+          LOG_LEVEL=info
+          
+          # Backup
+          BACKUP_SCHEDULE=0 2 * * *
+          BACKUP_RETENTION_DAYS=30
+          EOF
+
+      - name: Create database backup
+        if: github.event.inputs.skip_backup != 'true'
+        run: |
+          # Copy environment file
+          cp .env.production .env.france
+          
+          # Run backup script
+          chmod +x infrastructure/scripts/backup.sh
+          ./infrastructure/scripts/backup.sh --cluster france --type full
+
+      - name: Deploy to production
+        run: |
+          # Run deployment script
+          chmod +x infrastructure/scripts/deploy.sh
+          ./infrastructure/scripts/deploy.sh --cluster france --environment production
+
+      - name: Run GDPR compliance tests
+        run: |
+          # Wait for deployment to complete
+          sleep 90
+          
+          # Test API health
+          curl -f ${{ secrets.PRODUCTION_FRANCE_API_URL }}/health
+          
+          # Test frontend
+          curl -f ${{ secrets.PRODUCTION_FRANCE_FRONTEND_URL }}/
+          
+          # Test GDPR endpoints
+          curl -f ${{ secrets.PRODUCTION_FRANCE_API_URL }}/privacy/policy
+          curl -f ${{ secrets.PRODUCTION_FRANCE_API_URL }}/privacy/consent
+
+      - name: Notify deployment status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#production-deployments'
+          text: 'France Production deployment: ${{ job.status }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+  # Deploy to Switzerland Production
+  deploy-switzerland-production:
+    name: Deploy to Switzerland Production
+    runs-on: ubuntu-latest
+    needs: [pre-deployment-checks, build-and-push-production]
+    if: needs.pre-deployment-checks.outputs.deploy-switzerland == 'true'
+    environment:
+      name: production-switzerland
+      url: https://switzerland.mspr.example.com
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup production environment
+        run: |
+          # Create production environment configuration
+          cat > .env.production << EOF
+          NODE_ENV=production
+          CLUSTER_NAME=switzerland
+          CLUSTER_FEATURES=
+          CLUSTER_LANGUAGES=fr,de,it
+          
+          # Database
+          POSTGRES_DB=mspr_production_switzerland
+          POSTGRES_USER=mspr_production_switzerland_user
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD_PRODUCTION_SWITZERLAND }}
+          
+          # API
+          API_TOKEN=${{ secrets.API_TOKEN_PRODUCTION_SWITZERLAND }}
+          JWT_SECRET=${{ secrets.JWT_SECRET_PRODUCTION_SWITZERLAND }}
+          SESSION_SECRET=${{ secrets.SESSION_SECRET_PRODUCTION_SWITZERLAND }}
+          
+          # Services
+          FRONTEND_PORT=3000
+          BACKEND_PORT=3001
+          NEXT_PUBLIC_API_URL=https://switzerland-api.mspr.example.com
+          
+          # Security
+          HTTPS_ENABLED=true
+          SECURE_COOKIES=true
+          
+          # Monitoring
+          ENABLE_MONITORING=true
+          LOG_LEVEL=info
+          
+          # Backup
+          BACKUP_SCHEDULE=0 2 * * *
+          BACKUP_RETENTION_DAYS=30
+          EOF
+
+      - name: Create database backup
+        if: github.event.inputs.skip_backup != 'true'
+        run: |
+          # Copy environment file
+          cp .env.production .env.switzerland
+          
+          # Run backup script
+          chmod +x infrastructure/scripts/backup.sh
+          ./infrastructure/scripts/backup.sh --cluster switzerland --type full
+
+      - name: Deploy to production
+        run: |
+          # Run deployment script
+          chmod +x infrastructure/scripts/deploy.sh
+          ./infrastructure/scripts/deploy.sh --cluster switzerland --environment production
+
+      - name: Run multilingual tests
+        run: |
+          # Wait for deployment to complete
+          sleep 90
+          
+          # Test API health
+          curl -f ${{ secrets.PRODUCTION_SWITZERLAND_API_URL }}/health
+          
+          # Test multilingual frontend
+          curl -f ${{ secrets.PRODUCTION_SWITZERLAND_FRONTEND_URL }}/?lang=fr
+          curl -f ${{ secrets.PRODUCTION_SWITZERLAND_FRONTEND_URL }}/?lang=de
+          curl -f ${{ secrets.PRODUCTION_SWITZERLAND_FRONTEND_URL }}/?lang=it
+
+      - name: Notify deployment status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#production-deployments'
+          text: 'Switzerland Production deployment: ${{ job.status }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+  # Post-deployment monitoring
+  post-deployment-monitoring:
+    name: Post-Deployment Monitoring
+    runs-on: ubuntu-latest
+    needs: [deploy-us-production, deploy-france-production, deploy-switzerland-production]
+    if: always() && (needs.deploy-us-production.result == 'success' || needs.deploy-france-production.result == 'success' || needs.deploy-switzerland-production.result == 'success')
+    steps:
+      - name: Setup monitoring
+        run: |
+          # Set up monitoring checks
+          echo "Setting up post-deployment monitoring..."
+
+      - name: Monitor US production
+        if: needs.deploy-us-production.result == 'success'
+        run: |
+          # Monitor US production for 10 minutes
+          for i in {1..10}; do
+            echo "Monitoring US production - Check $i/10"
+            curl -f ${{ secrets.PRODUCTION_US_API_URL }}/health
+            sleep 60
+          done
+
+      - name: Monitor France production
+        if: needs.deploy-france-production.result == 'success'
+        run: |
+          # Monitor France production for 10 minutes
+          for i in {1..10}; do
+            echo "Monitoring France production - Check $i/10"
+            curl -f ${{ secrets.PRODUCTION_FRANCE_API_URL }}/health
+            sleep 60
+          done
+
+      - name: Monitor Switzerland production
+        if: needs.deploy-switzerland-production.result == 'success'
+        run: |
+          # Monitor Switzerland production for 10 minutes
+          for i in {1..10}; do
+            echo "Monitoring Switzerland production - Check $i/10"
+            curl -f ${{ secrets.PRODUCTION_SWITZERLAND_API_URL }}/health
+            sleep 60
+          done
+
+  # Send deployment summary
+  deployment-summary:
+    name: Deployment Summary
+    runs-on: ubuntu-latest
+    needs: [deploy-us-production, deploy-france-production, deploy-switzerland-production, post-deployment-monitoring]
+    if: always()
+    steps:
+      - name: Prepare deployment summary
+        run: |
+          echo "Production deployment completed"
+          echo "US: ${{ needs.deploy-us-production.result }}"
+          echo "France: ${{ needs.deploy-france-production.result }}"
+          echo "Switzerland: ${{ needs.deploy-switzerland-production.result }}"
+          echo "Monitoring: ${{ needs.post-deployment-monitoring.result }}"
+
+      - name: Send deployment summary
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          channel: '#production-deployments'
+          custom_payload: |
+            {
+              text: "🚀 Production Deployment Summary",
+              attachments: [
+                {
+                  color: "${{ (needs.deploy-us-production.result == 'success' || needs.deploy-france-production.result == 'success' || needs.deploy-switzerland-production.result == 'success') && 'good' || 'danger' }}",
+                  fields: [
+                    { title: "🇺🇸 US Production", value: "${{ needs.deploy-us-production.result }}", short: true },
+                    { title: "🇫🇷 France Production", value: "${{ needs.deploy-france-production.result }}", short: true },
+                    { title: "🇨🇭 Switzerland Production", value: "${{ needs.deploy-switzerland-production.result }}", short: true },
+                    { title: "📊 Monitoring", value: "${{ needs.post-deployment-monitoring.result }}", short: true },
+                    { title: "🕐 Deployment Time", value: "${{ github.event.head_commit.timestamp }}", short: true },
+                    { title: "👤 Deployed By", value: "${{ github.actor }}", short: true }
+                  ]
+                }
+              ]
+            }
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Create deployment tag
+        if: needs.deploy-us-production.result == 'success' || needs.deploy-france-production.result == 'success' || needs.deploy-switzerland-production.result == 'success'
+        run: |
+          # Create a git tag for successful deployment
+          git config --global user.email "ci@mspr.example.com"
+          git config --global user.name "CI/CD Pipeline"
+          
+          TAG_NAME="production-$(date +%Y%m%d-%H%M%S)"
+          git tag -a $TAG_NAME -m "Production deployment on $(date)"
+          git push origin $TAG_NAME

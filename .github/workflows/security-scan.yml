@@ -1,0 +1,447 @@
+name: Security Scan
+
+on:
+  schedule:
+    # Run security scans daily at 3 AM
+    - cron: '0 3 * * *'
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # Dependency vulnerability scanning
+  dependency-scan:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      # Backend dependency scan
+      - name: Install backend dependencies
+        working-directory: ./rest
+        run: pnpm install --frozen-lockfile
+
+      - name: Run npm audit (Backend)
+        working-directory: ./rest
+        run: |
+          pnpm audit --audit-level moderate --json > ../backend-audit.json || true
+          pnpm audit --audit-level moderate
+
+      # Frontend dependency scan
+      - name: Install frontend dependencies
+        working-directory: ./site
+        run: pnpm install --frozen-lockfile
+
+      - name: Run npm audit (Frontend)
+        working-directory: ./site
+        run: |
+          pnpm audit --audit-level moderate --json > ../frontend-audit.json || true
+          pnpm audit --audit-level moderate
+
+      # Python dependency scan
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install safety
+
+      - name: Run Python safety check
+        run: |
+          safety check --json --output python-safety.json || true
+          safety check
+
+      # Advanced dependency scanning with Snyk
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --all-projects --severity-threshold=medium
+
+      - name: Upload dependency scan results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-scan-results
+          path: |
+            backend-audit.json
+            frontend-audit.json
+            python-safety.json
+
+  # Container security scanning
+  container-security:
+    name: Container Security Scan
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [frontend, backend, postgres, etl]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./infrastructure/docker/Dockerfile.${{ matrix.service }}
+          tags: mspr-${{ matrix.service }}:security-scan
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'mspr-${{ matrix.service }}:security-scan'
+          format: 'sarif'
+          output: 'trivy-${{ matrix.service }}.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-${{ matrix.service }}.sarif'
+
+      - name: Run Grype vulnerability scanner
+        run: |
+          # Install Grype
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+          
+          # Scan the Docker image
+          grype mspr-${{ matrix.service }}:security-scan -o json --file grype-${{ matrix.service }}.json
+
+      - name: Upload container scan results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: container-security-${{ matrix.service }}
+          path: |
+            trivy-${{ matrix.service }}.sarif
+            grype-${{ matrix.service }}.json
+
+  # Static code analysis
+  static-analysis:
+    name: Static Code Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      # ESLint security analysis
+      - name: Install dependencies
+        run: |
+          cd rest && pnpm install --frozen-lockfile
+          cd ../site && pnpm install --frozen-lockfile
+
+      - name: Run ESLint security rules
+        run: |
+          # Install eslint security plugins
+          cd rest
+          pnpm add --save-dev eslint-plugin-security eslint-plugin-no-secrets
+          
+          # Run security-focused ESLint
+          npx eslint . --ext .js,.ts --format json --output-file ../eslint-security-backend.json || true
+          
+          cd ../site
+          pnpm add --save-dev eslint-plugin-security eslint-plugin-no-secrets
+          npx eslint . --ext .js,.ts,.jsx,.tsx --format json --output-file ../eslint-security-frontend.json || true
+
+      # SonarQube analysis
+      - name: SonarQube Scan
+        uses: sonarqube-quality-gate-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      # CodeQL analysis
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript, python
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+      # Semgrep static analysis
+      - name: Run Semgrep
+        run: |
+          python -m pip install semgrep
+          semgrep --config=auto --json --output=semgrep-results.json . || true
+
+      - name: Upload static analysis results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: static-analysis-results
+          path: |
+            eslint-security-*.json
+            semgrep-results.json
+
+  # Secret scanning
+  secret-scan:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run TruffleHog
+        uses: trufflesecurity/trufflehog@v3.74.0
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --debug --only-verified
+
+      - name: Run GitLeaks
+        run: |
+          # Install GitLeaks
+          wget -q -O gitleaks.tar.gz https://github.com/zricethezav/gitleaks/releases/latest/download/gitleaks_$(uname -s)_x64.tar.gz
+          tar -xzf gitleaks.tar.gz
+          
+          # Run GitLeaks scan
+          ./gitleaks detect --source . --report-format json --report-path gitleaks-report.json --verbose || true
+
+      - name: Upload secret scan results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: secret-scan-results
+          path: |
+            gitleaks-report.json
+
+  # Infrastructure security scan
+  infrastructure-security:
+    name: Infrastructure Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Checkov
+        run: |
+          pip install checkov
+          checkov -d . --framework dockerfile,docker_compose --output json --output-file checkov-results.json || true
+
+      - name: Run Hadolint (Dockerfile linter)
+        run: |
+          # Install Hadolint
+          wget -O hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+          chmod +x hadolint
+          
+          # Lint all Dockerfiles
+          find . -name "Dockerfile*" -exec ./hadolint {} \; || true
+
+      - name: Run Docker Bench Security
+        run: |
+          # Clone Docker Bench Security
+          git clone https://github.com/docker/docker-bench-security.git
+          cd docker-bench-security
+          
+          # Run the security benchmark
+          sudo ./docker-bench-security.sh -l docker-bench-results.log || true
+
+      - name: Upload infrastructure scan results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: infrastructure-security-results
+          path: |
+            checkov-results.json
+            docker-bench-security/docker-bench-results.log
+
+  # GDPR compliance scan (for France cluster)
+  gdpr-compliance:
+    name: GDPR Compliance Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Scan for GDPR compliance
+        run: |
+          # Check for data collection patterns
+          echo "Scanning for GDPR compliance issues..."
+          
+          # Check for personal data handling
+          grep -r -i "personal\|email\|phone\|address\|location" --include="*.js" --include="*.ts" --include="*.py" . | grep -v node_modules | grep -v ".git" > gdpr-data-scan.txt || true
+          
+          # Check for cookie usage
+          grep -r -i "cookie\|session\|tracking" --include="*.js" --include="*.ts" . | grep -v node_modules | grep -v ".git" > gdpr-cookie-scan.txt || true
+          
+          # Check for consent mechanisms
+          grep -r -i "consent\|privacy\|terms" --include="*.js" --include="*.ts" --include="*.jsx" --include="*.tsx" . | grep -v node_modules | grep -v ".git" > gdpr-consent-scan.txt || true
+
+      - name: Upload GDPR scan results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gdpr-compliance-results
+          path: |
+            gdpr-*.txt
+
+  # Security report generation
+  security-report:
+    name: Generate Security Report
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, container-security, static-analysis, secret-scan, infrastructure-security, gdpr-compliance]
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all scan results
+        uses: actions/download-artifact@v4
+        with:
+          path: scan-results
+
+      - name: Generate security report
+        run: |
+          # Create comprehensive security report
+          cat > security-report.md << 'EOF'
+          # Security Scan Report
+          
+          **Date:** $(date)
+          **Commit:** ${{ github.sha }}
+          **Branch:** ${{ github.ref_name }}
+          
+          ## Summary
+          
+          | Scan Type | Status |
+          |-----------|--------|
+          | Dependency Scan | ${{ needs.dependency-scan.result }} |
+          | Container Security | ${{ needs.container-security.result }} |
+          | Static Analysis | ${{ needs.static-analysis.result }} |
+          | Secret Scan | ${{ needs.secret-scan.result }} |
+          | Infrastructure Security | ${{ needs.infrastructure-security.result }} |
+          | GDPR Compliance | ${{ needs.gdpr-compliance.result }} |
+          
+          ## Recommendations
+          
+          - [ ] Review dependency vulnerabilities
+          - [ ] Fix container security issues
+          - [ ] Address static analysis findings
+          - [ ] Verify no secrets are exposed
+          - [ ] Ensure infrastructure follows security best practices
+          - [ ] Validate GDPR compliance for France cluster
+          
+          ## Action Items
+          
+          1. Prioritize critical and high severity vulnerabilities
+          2. Update dependencies with security patches
+          3. Review and remediate code quality issues
+          4. Implement additional security controls as needed
+          
+          EOF
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: security-report.md
+
+      - name: Post security summary to PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('security-report.md', 'utf8');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '## 🔒 Security Scan Results\n\n' + report
+            });
+
+      - name: Notify security team
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          channel: '#security-alerts'
+          text: '🚨 Security scan failed! Critical vulnerabilities may be present.'
+          webhook_url: ${{ secrets.SECURITY_SLACK_WEBHOOK }}
+
+  # Security metrics
+  security-metrics:
+    name: Security Metrics
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, container-security, static-analysis, secret-scan, infrastructure-security, gdpr-compliance]
+    if: always()
+    steps:
+      - name: Calculate security metrics
+        run: |
+          echo "Security scan completed"
+          echo "Dependency scan: ${{ needs.dependency-scan.result }}"
+          echo "Container security: ${{ needs.container-security.result }}"
+          echo "Static analysis: ${{ needs.static-analysis.result }}"
+          echo "Secret scan: ${{ needs.secret-scan.result }}"
+          echo "Infrastructure security: ${{ needs.infrastructure-security.result }}"
+          echo "GDPR compliance: ${{ needs.gdpr-compliance.result }}"
+          
+          # Calculate overall security score
+          TOTAL_CHECKS=6
+          PASSED_CHECKS=0
+          
+          [ "${{ needs.dependency-scan.result }}" == "success" ] && ((PASSED_CHECKS++))
+          [ "${{ needs.container-security.result }}" == "success" ] && ((PASSED_CHECKS++))
+          [ "${{ needs.static-analysis.result }}" == "success" ] && ((PASSED_CHECKS++))
+          [ "${{ needs.secret-scan.result }}" == "success" ] && ((PASSED_CHECKS++))
+          [ "${{ needs.infrastructure-security.result }}" == "success" ] && ((PASSED_CHECKS++))
+          [ "${{ needs.gdpr-compliance.result }}" == "success" ] && ((PASSED_CHECKS++))
+          
+          SECURITY_SCORE=$((PASSED_CHECKS * 100 / TOTAL_CHECKS))
+          echo "Security Score: $SECURITY_SCORE%"
+          
+          # Send metrics to monitoring system (if configured)
+          if [ -n "${{ secrets.METRICS_ENDPOINT }}" ]; then
+            curl -X POST "${{ secrets.METRICS_ENDPOINT }}" \
+              -H "Content-Type: application/json" \
+              -d "{\"metric\":\"security_score\",\"value\":$SECURITY_SCORE,\"timestamp\":$(date +%s)}"
+          fi

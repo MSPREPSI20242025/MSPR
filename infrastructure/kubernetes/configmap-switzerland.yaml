@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mspr-config-switzerland
+  namespace: mspr-switzerland
+  labels:
+    app: mspr
+    cluster: switzerland
+data:
+  NODE_ENV: "production"
+  CLUSTER_NAME: "switzerland"
+  CLUSTER_FEATURES: ""
+  CLUSTER_LANGUAGES: "fr,de,it"
+  DEFAULT_LANGUAGE: "fr"
+  SUPPORTED_LANGUAGES: "fr,de,it"
+  FALLBACK_LANGUAGE: "fr"
+  AUTO_DETECT_LANGUAGE: "true"
+  LANGUAGE_FR_NAME: "Français"
+  LANGUAGE_DE_NAME: "Deutsch"
+  LANGUAGE_IT_NAME: "Italiano"
+  ENABLE_API_TECHNICAL: "false"
+  ENABLE_DATAVIZ: "false"
+  ENABLE_ETL: "false"
+  ENABLE_REDIS: "false"
+  ENABLE_MONITORING: "false"
+  LOG_LEVEL: "warn"
+  LOG_FORMAT: "simple"
+  FRONTEND_PORT: "3000"
+  BACKEND_PORT: "3001"
+  BACKUP_RETENTION_DAYS: "30"
+  TIMEZONE: "Europe/Zurich"
+  CURRENCY: "CHF"
+  DATE_FORMAT_FR: "DD.MM.YYYY"
+  DATE_FORMAT_DE: "DD.MM.YYYY"
+  DATE_FORMAT_IT: "DD.MM.YYYY"
+  NUMBER_FORMAT_FR: "fr-CH"
+  NUMBER_FORMAT_DE: "de-CH"
+  NUMBER_FORMAT_IT: "it-CH"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config-switzerland
+  namespace: mspr-switzerland
+  labels:
+    app: postgres
+    cluster: switzerland
+data:
+  POSTGRES_DB: "mspr_switzerland"
+  POSTGRES_USER: "mspr_switzerland_user"

@@ -1,0 +1,201 @@
+version: "3.8"
+
+services:
+    # PostgreSQL Database
+    postgres:
+        build:
+            context: ../..
+            dockerfile: infrastructure/docker/Dockerfile.postgres
+        container_name: mspr-postgres
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB:-mspr}
+            POSTGRES_USER: ${POSTGRES_USER:-mspr_user}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mspr_password}
+            POSTGRES_INITDB_ARGS: "--auth-host=md5"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+            - postgres_logs:/var/log/postgresql
+        ports:
+            - "${POSTGRES_PORT:-5432}:5432"
+        networks:
+            - mspr-network
+        restart: unless-stopped
+        healthcheck:
+            test:
+                [
+                    "CMD-SHELL",
+                    "pg_isready -U ${POSTGRES_USER:-mspr_user} -d ${POSTGRES_DB:-mspr}",
+                ]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+            start_period: 30s
+
+    # Backend API
+    backend:
+        build:
+            context: ../..
+            dockerfile: infrastructure/docker/Dockerfile.backend
+        container_name: mspr-backend
+        environment:
+            NODE_ENV: ${NODE_ENV:-development}
+            PORT: ${BACKEND_PORT:-3001}
+            DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-mspr_user}:${POSTGRES_PASSWORD:-mspr_password}@postgres:5432/${POSTGRES_DB:-mspr}}
+            API_TOKEN: ${API_TOKEN:-development-token}
+            CLUSTER_NAME: ${CLUSTER_NAME:-development}
+            CLUSTER_FEATURES: ${CLUSTER_FEATURES:-api_technical,dataviz,etl}
+            CLUSTER_LANGUAGES: ${CLUSTER_LANGUAGES:-en}
+            CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+            HOST: ${HOST:-0.0.0.0}
+        ports:
+            - "${BACKEND_PORT:-3001}:3001"
+        depends_on:
+            postgres:
+                condition: service_healthy
+        networks:
+            - mspr-network
+        restart: unless-stopped
+        # healthcheck:
+        #     test: ["CMD-SHELL", "curl -f http://localhost:3001/ || exit 1"]
+        #     interval: 30s
+        #     timeout: 10s
+        #     retries: 5
+        #     start_period: 30s
+        volumes:
+            - backend_logs:/app/logs
+
+    # Frontend Application
+    frontend:
+        build:
+            context: ../..
+            dockerfile: infrastructure/docker/Dockerfile.frontend
+            args:
+                API_TOKEN: ${API_TOKEN:-development-token}
+                NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001/api}
+                CLUSTER_NAME: ${CLUSTER_NAME:-development}
+                CLUSTER_FEATURES: ${CLUSTER_FEATURES:-api_technical,dataviz,etl}
+                CLUSTER_LANGUAGES: ${CLUSTER_LANGUAGES:-en}
+        container_name: mspr-frontend
+        environment:
+            NODE_ENV: ${NODE_ENV:-development}
+            PORT: ${FRONTEND_PORT:-3000}
+            NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001/api}
+            NEXT_PUBLIC_API_TOKEN: ${API_TOKEN:-development-token}
+            CLUSTER_NAME: ${CLUSTER_NAME:-development}
+            CLUSTER_FEATURES: ${CLUSTER_FEATURES:-api_technical,dataviz,etl}
+            CLUSTER_LANGUAGES: ${CLUSTER_LANGUAGES:-en}
+        ports:
+            - "${FRONTEND_PORT:-3000}:3000"
+        depends_on:
+            - backend
+              # backend:
+              #     condition: service_healthy
+        networks:
+            - mspr-network
+        restart: unless-stopped
+        healthcheck:
+            test:
+                [
+                    "CMD-SHELL",
+                    "curl -f http://localhost:3000/api/health || exit 1",
+                ]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+            start_period: 30s
+        volumes:
+            - frontend_logs:/app/logs
+
+    # ETL Service (Python)
+    etl:
+        build:
+            context: ../..
+            dockerfile: infrastructure/docker/Dockerfile.etl
+        container_name: mspr-etl
+        environment:
+            DATABASE_URL: postgresql://${POSTGRES_USER:-mspr_user}:${POSTGRES_PASSWORD:-mspr_password}@postgres:5432/${POSTGRES_DB:-mspr}
+            CLUSTER_NAME: ${CLUSTER_NAME:-development}
+            ETL_SCHEDULE: ${ETL_SCHEDULE:-0 2 * * *} # Daily at 2 AM
+        depends_on:
+            postgres:
+                condition: service_healthy
+        networks:
+            - mspr-network
+        restart: unless-stopped
+        volumes:
+            - etl_logs:/app/logs
+            - etl_data:/app/data
+        profiles:
+            - etl # Only start if ETL is enabled for this cluster
+
+    # Redis (for caching and session management)
+    redis:
+        image: redis:7-alpine
+        container_name: mspr-redis
+        ports:
+            - "${REDIS_PORT:-6379}:6379"
+        networks:
+            - mspr-network
+        restart: unless-stopped
+        volumes:
+            - redis_data:/data
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+            start_period: 30s
+        profiles:
+            - cache # Only start if caching is enabled
+
+    # Nginx (Load Balancer/Reverse Proxy)
+    nginx:
+        image: nginx:alpine
+        container_name: mspr-nginx
+        ports:
+            - "${NGINX_HTTP_PORT:-80}:80"
+            - "${NGINX_HTTPS_PORT:-443}:443"
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./nginx/conf.d:/etc/nginx/conf.d:ro
+            - ./nginx/ssl:/etc/nginx/ssl:ro
+            - nginx_logs:/var/log/nginx
+        depends_on:
+            - frontend
+            - backend
+        networks:
+            - mspr-network
+        restart: unless-stopped
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost/health"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+            start_period: 30s
+        profiles:
+            - production # Only start in production
+
+networks:
+    mspr-network:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 172.20.0.0/16
+
+volumes:
+    postgres_data:
+        driver: local
+    postgres_logs:
+        driver: local
+    backend_logs:
+        driver: local
+    frontend_logs:
+        driver: local
+    etl_logs:
+        driver: local
+    etl_data:
+        driver: local
+    redis_data:
+        driver: local
+    nginx_logs:
+        driver: local

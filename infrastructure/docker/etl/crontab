@@ -1,0 +1,6 @@
+# ETL Cron Job Configuration
+# Run ETL process daily at 2 AM (can be overridden by ETL_SCHEDULE environment variable)
+0 2 * * * etl_user cd /app && python main.py >> logs/etl.log 2>&1
+
+# Keep cron running
+* * * * * etl_user echo "ETL cron is running" >> logs/cron.log 2>&1

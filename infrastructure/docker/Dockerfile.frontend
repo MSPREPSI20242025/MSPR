@@ -1,0 +1,74 @@
+# Construction multi-étapes pour le frontend Next.js
+FROM node:20-alpine AS builder
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Installer pnpm
+RUN npm install -g pnpm
+
+# Copier les fichiers de package
+COPY site/package.json site/pnpm-lock.yaml ./
+
+# Installer les dépendances
+RUN pnpm install --frozen-lockfile
+
+# Copier le code source
+COPY site/ ./
+
+# Définir les variables d'environnement de construction
+ARG NEXT_PUBLIC_API_URL
+ARG CLUSTER_NAME
+ARG CLUSTER_FEATURES
+ARG API_TOKEN
+ARG CLUSTER_LANGUAGES
+
+ENV NEXT_PUBLIC_API_TOKEN=$API_TOKEN
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV CLUSTER_NAME=$CLUSTER_NAME
+ENV CLUSTER_FEATURES=$CLUSTER_FEATURES
+ENV CLUSTER_LANGUAGES=$CLUSTER_LANGUAGES
+
+# Construire l'application
+RUN pnpm build
+
+# Étape de production
+FROM node:20-alpine AS production
+
+# Installer les mises à jour de sécurité
+RUN apk update && apk upgrade
+
+# Créer un utilisateur non-root
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S frontend -u 1001
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Installer pnpm
+RUN npm install -g pnpm
+
+# Copier les fichiers de package
+COPY site/package.json site/pnpm-lock.yaml ./
+
+# Installer uniquement les dépendances de production
+RUN pnpm install --prod --frozen-lockfile
+
+# Copier l'application construite depuis l'étape builder
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
+# Changer la propriété pour l'utilisateur non-root
+RUN chown -R frontend:nodejs /app
+USER frontend
+
+# Exposer le port
+EXPOSE 3000
+
+# Vérification de santé
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+
+# Démarrer l'application
+CMD ["node", "server.js"]

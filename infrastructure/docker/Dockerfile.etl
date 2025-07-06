@@ -1,0 +1,50 @@
+# ETL Service Dockerfile
+FROM python:3.11-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    cron \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -m -s /bin/bash etl_user
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy ETL scripts
+COPY main.py .
+COPY fetch.py .
+COPY postgress.py .
+COPY raw_data/ ./raw_data/
+COPY filtered/ ./filtered/
+
+# Create directories for logs and data
+RUN mkdir -p logs data
+
+# Copy cron job and entrypoint script
+COPY infrastructure/docker/etl/crontab /etc/cron.d/etl-cron
+COPY infrastructure/docker/etl/entrypoint.sh /entrypoint.sh
+
+# Set permissions
+RUN chmod 0644 /etc/cron.d/etl-cron
+RUN chmod +x /entrypoint.sh
+RUN crontab /etc/cron.d/etl-cron
+
+# Change ownership to non-root user
+RUN chown -R etl_user:etl_user /app
+USER etl_user
+
+# Health check
+HEALTHCHECK --interval=60s --timeout=30s --start-period=5s --retries=3 \
+  CMD python -c "import psycopg2; print('ETL service is healthy')"
+
+# Start cron and keep container running
+ENTRYPOINT ["/entrypoint.sh"]
