@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/ui/Navigation";
+import Footer from "@/components/Footer";
+import CookieBanner from "@/components/CookieBanner";
+import { TranslationProvider } from "@/components/TranslationProvider";
+import ClusterLanguageManager from "@/components/ClusterLanguageManager";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "Epidemic Dashboard",
-    description: "Dashboard for COVID-19 and MPOX data visualization",
+    title: "MSPR - Surveillance des Pandémies",
+    description: "Plateforme de surveillance épidémiologique pour l'OMS - Données COVID-19 et MPOX",
 };
 
 export default function RootLayout({
@@ -16,7 +20,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en">
+        <html lang="fr">
             <head>
                 <script
                     crossOrigin="anonymous"
@@ -24,12 +28,17 @@ export default function RootLayout({
                 />
             </head>
             <body className={inter.className}>
-                <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-                    <Navigation />
-                    <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                        {children}
-                    </main>
-                </div>
+                <TranslationProvider>
+                    <ClusterLanguageManager />
+                    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+                        <Navigation />
+                        <main className="flex-1 max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 w-full">
+                            {children}
+                        </main>
+                        <Footer />
+                        <CookieBanner />
+                    </div>
+                </TranslationProvider>
             </body>
         </html>
     );

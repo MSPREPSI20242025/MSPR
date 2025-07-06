@@ -11,6 +11,8 @@
         "skipLibCheck": true
     },
     "include": [
+        "**/*.html",
+        "**/*.yaml",
         "**/*.ts",
         "**/*.tsx",
         ".next/types/**/*.ts",

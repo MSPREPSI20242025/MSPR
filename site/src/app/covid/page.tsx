@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardStat } from "@/components/ui/Card";
 import { api, CovidData, CovidTotals } from "@/services/api";
+import { useTranslation } from "@/components/TranslationProvider";
 import {
     LineChart,
     Line,
@@ -17,23 +18,31 @@ import {
 } from "recharts";
 
 export default function CovidPage() {
+    const { t } = useTranslation();
     const [covidTotals, setCovidTotals] = useState<CovidTotals | null>(null);
     const [aggregatedData, setAggregatedData] = useState<CovidData[]>([]);
     const [selectedCountry, setSelectedCountry] = useState<string>("Global");
-    const [timeRange, setTimeRange] = useState<number>(30); // Default to 30 days
+    const [timeRange, setTimeRange] = useState<number>(90); // Default to 90 days
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoading(true);
+                setError(null);
                 const [totals, allData] = await Promise.all([
                     api.getCovidTotals(),
                     api.getAllCovidData(undefined, 100_000_000),
                 ]);
                 setCovidTotals(totals);
-                const aggregated = aggregateByDay(allData);
+                const aggregated = aggregateByWeek(allData);
                 setAggregatedData(aggregated);
             } catch (error) {
                 console.error("Error fetching data:", error);
+                setError("Unable to load data. Please check if the API server and database are running.");
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -43,43 +52,49 @@ export default function CovidPage() {
     const handleCountryChange = async (country: string) => {
         setSelectedCountry(country);
         try {
-            const data = await api.getAllCovidData(country, 1000);
-            const aggregated = aggregateByDay(data);
+            setError(null);
+            const data = await api.getAllCovidData(country === "Global" ? undefined : country, 1000);
+            const aggregated = aggregateByWeek(data);
             setAggregatedData(aggregated);
         } catch (error) {
             console.error("Error fetching country data:", error);
+            setError("Unable to load country data. Please check if the API server and database are running.");
         }
     };
 
-    // Function to aggregate data by day
-    const aggregateByDay = (data: CovidData[]): CovidData[] => {
+    // Function to get week start date (Monday)
+    const getWeekStart = (date: Date): string => {
+        const d = new Date(date);
+        const day = d.getDay();
+        const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+        d.setDate(diff);
+        return d.toISOString().split('T')[0];
+    };
+
+    // Function to aggregate data by week
+    const aggregateByWeek = (data: CovidData[]): CovidData[] => {
         const aggregated: { [key: string]: CovidData } = {};
 
         data.forEach((item) => {
-            const date = item.date.split("T")[0]; // Extract just the date part
+            const itemDate = new Date(item.date);
+            const weekStart = getWeekStart(itemDate);
 
-            if (!aggregated[date]) {
-                aggregated[date] = {
-                    date,
+            if (!aggregated[weekStart]) {
+                aggregated[weekStart] = {
+                    date: weekStart,
                     country:
                         selectedCountry === "Global" ? "Global" : item.country,
                     total_cases: 0,
                     new_cases: 0,
-                    active_cases: 0,
                     total_deaths: 0,
                     new_deaths: 0,
-                    total_recovered: 0,
-                    daily_recovered: 0,
                 };
             }
 
-            aggregated[date].total_cases += item.total_cases;
-            aggregated[date].new_cases += item.new_cases;
-            aggregated[date].active_cases += item.active_cases;
-            aggregated[date].total_deaths += item.total_deaths;
-            aggregated[date].new_deaths += item.new_deaths;
-            aggregated[date].total_recovered += item.total_recovered;
-            aggregated[date].daily_recovered += item.daily_recovered;
+            aggregated[weekStart].total_cases += item.total_cases;
+            aggregated[weekStart].new_cases += item.new_cases;
+            aggregated[weekStart].total_deaths += item.total_deaths;
+            aggregated[weekStart].new_deaths += item.new_deaths;
         });
 
         return Object.values(aggregated).sort(
@@ -94,7 +109,7 @@ export default function CovidPage() {
     ): CovidData[] => {
         if (days === 0) return data; // 0 means all data
 
-        const today = new Date("2020-07-27");
+        const today = new Date();
         const cutoffDate = new Date(today);
         cutoffDate.setDate(today.getDate() - days);
 
@@ -107,12 +122,31 @@ export default function CovidPage() {
     // Get data filtered by the selected time range
     const filteredData = filterDataByTimeRange(aggregatedData, timeRange);
 
-    const activeCases = covidTotals
-        ? (
-              Number(covidTotals.total_cases) -
-              Number(covidTotals.total_recovered)
-          ).toLocaleString()
-        : "Loading...";
+    const activeCases = "N/A";
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-lg text-gray-600 dark:text-gray-400">Loading data...</div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <div className="text-red-600 dark:text-red-400 mb-4">{error}</div>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -136,10 +170,9 @@ export default function CovidPage() {
                             className="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             aria-label="Select time range">
                             <option value="0">All time</option>
-                            <option value="7">Last 7 days</option>
-                            <option value="14">Last 14 days</option>
-                            <option value="30">Last 30 days</option>
                             <option value="90">Last 90 days</option>
+                            <option value="180">Last 180 days</option>
+                            <option value="365">Last 365 days</option>
                         </select>
                     </div>
                     <div>
@@ -169,7 +202,7 @@ export default function CovidPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card>
                     <CardStat
-                        title="Total Cases"
+                        title={t('data.totalCases')}
                         value={
                             Number(covidTotals?.total_cases).toLocaleString() ||
                             "Loading..."
@@ -179,7 +212,7 @@ export default function CovidPage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="Total Deaths"
+                        title={t('data.totalDeaths')}
                         value={
                             Number(
                                 covidTotals?.total_deaths
@@ -190,18 +223,7 @@ export default function CovidPage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="Total Recovered"
-                        value={
-                            Number(
-                                covidTotals?.total_recovered
-                            ).toLocaleString() || "Loading..."
-                        }
-                        trend="up"
-                    />
-                </Card>
-                <Card>
-                    <CardStat
-                        title="Active Cases"
+                        title={t('data.activeCases')}
                         value={activeCases}
                         trend="down"
                     />
@@ -209,12 +231,18 @@ export default function CovidPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="Daily New Cases">
+                <Card title={t('charts.weeklyNewCases')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={filteredData}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" />
+                                <XAxis 
+                                    dataKey="date" 
+                                    tickFormatter={(value) => {
+                                        const date = new Date(value);
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    }}
+                                />
                                 <YAxis />
                                 <Tooltip />
                                 <Legend />
@@ -222,37 +250,85 @@ export default function CovidPage() {
                                     type="monotone"
                                     dataKey="new_cases"
                                     stroke="#8884d8"
-                                    name="New Cases"
-                                />
-                                <Line
-                                    type="monotone"
-                                    dataKey="new_deaths"
-                                    stroke="#82ca9d"
-                                    name="New Deaths"
+                                    name={t('data.newCases')}
                                 />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
                 </Card>
 
-                <Card title="Cases Distribution">
+                <Card title={t('charts.weeklyNewDeaths')}>
+                    <div className="h-[400px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={filteredData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis 
+                                    dataKey="date" 
+                                    tickFormatter={(value) => {
+                                        const date = new Date(value);
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    }}
+                                />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                <Line
+                                    type="monotone"
+                                    dataKey="new_deaths"
+                                    stroke="#82ca9d"
+                                    name={t('data.newDeaths')}
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </Card>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card title={t('charts.weeklyCasesDistribution')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={filteredData}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" />
+                                <XAxis 
+                                    dataKey="date" 
+                                    tickFormatter={(value) => {
+                                        const date = new Date(value);
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    }}
+                                />
                                 <YAxis />
                                 <Tooltip />
                                 <Legend />
                                 <Bar
                                     dataKey="new_cases"
                                     fill="#8884d8"
-                                    name="New Cases"
+                                    name={t('data.newCases')}
                                 />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </Card>
+
+                <Card title={t('charts.weeklyDeathsDistribution')}>
+                    <div className="h-[400px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={filteredData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis 
+                                    dataKey="date" 
+                                    tickFormatter={(value) => {
+                                        const date = new Date(value);
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    }}
+                                />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
                                 <Bar
                                     dataKey="new_deaths"
                                     fill="#82ca9d"
-                                    name="New Deaths"
+                                    name={t('data.newDeaths')}
                                 />
                             </BarChart>
                         </ResponsiveContainer>

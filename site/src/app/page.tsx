@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardStat } from "@/components/ui/Card";
 import { api, CovidTotals, StatsSummary } from "@/services/api";
+import { useTranslation } from "@/components/TranslationProvider";
 import {
     LineChart,
     Line,
@@ -15,6 +16,7 @@ import {
 } from "recharts";
 
 export default function Home() {
+    const { t } = useTranslation();
     const [covidTotals, setCovidTotals] = useState<CovidTotals | null>(null);
     const [statsSummary, setStatsSummary] = useState<StatsSummary | null>(null);
     const [latestCovidData, setLatestCovidData] = useState<any[]>([]);
@@ -69,15 +71,15 @@ export default function Home() {
     };
 
     return (
-        <div className="flex flex-col h-dvh overflow-hidden p-6">
+        <div className="flex flex-col  overflow-hidden p-6">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-                Dashboard Overview
+                {t("home.title")}
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                 <Card>
                     <CardStat
-                        title="Total COVID Cases"
+                        title={t("data.totalCases", "Total COVID Cases")}
                         value={
                             Number(covidTotals?.total_cases).toLocaleString() ||
                             "Loading..."
@@ -87,7 +89,7 @@ export default function Home() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="Total COVID Deaths"
+                        title={t("data.totalDeaths", "Total COVID Deaths")}
                         value={
                             Number(
                                 covidTotals?.total_deaths
@@ -98,7 +100,7 @@ export default function Home() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="Total MPOX Cases"
+                        title={t("data.totalCases", "Total MPOX Cases")}
                         value={
                             statsSummary?.mpox.total_cases.toLocaleString() ||
                             "Loading..."
@@ -108,7 +110,7 @@ export default function Home() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="Total MPOX Deaths"
+                        title={t("data.totalDeaths", "Total MPOX Deaths")}
                         value={
                             statsSummary?.mpox.total_deaths.toLocaleString() ||
                             "Loading..."
@@ -119,8 +121,8 @@ export default function Home() {
             </div>
 
             <Card
-                title="Latest COVID-19 Updates"
-                className="flex-1 flex flex-col overflow-hidden">
+                title={t("data.latestUpdates", "Latest COVID-19 Updates")}
+                className="flex flex-col overflow-hidden">
                 <div className="overflow-auto flex-1">
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead className="bg-gray-50 dark:bg-gray-800">
@@ -128,22 +130,26 @@ export default function Home() {
                                 <th
                                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
                                     onClick={() => handleSort("country")}>
-                                    Country {getSortIcon("country")}
+                                    {t("data.country", "Country")}{" "}
+                                    {getSortIcon("country")}
                                 </th>
                                 <th
                                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
                                     onClick={() => handleSort("date")}>
-                                    Date {getSortIcon("date")}
+                                    {t("data.date", "Date")}{" "}
+                                    {getSortIcon("date")}
                                 </th>
                                 <th
                                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
                                     onClick={() => handleSort("new_cases")}>
-                                    New Cases {getSortIcon("new_cases")}
+                                    {t("data.newCases", "New Cases")}{" "}
+                                    {getSortIcon("new_cases")}
                                 </th>
                                 <th
                                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
                                     onClick={() => handleSort("new_deaths")}>
-                                    New Deaths {getSortIcon("new_deaths")}
+                                    {t("data.newDeaths", "New Deaths")}{" "}
+                                    {getSortIcon("new_deaths")}
                                 </th>
                             </tr>
                         </thead>

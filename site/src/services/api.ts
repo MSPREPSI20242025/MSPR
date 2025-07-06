@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:4455/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4455/api";
 const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "";
 
 // Types based on the OpenAPI specification
@@ -10,11 +10,8 @@ export interface CovidData {
     country: string;
     total_cases: number;
     new_cases: number;
-    active_cases: number;
     total_deaths: number;
     new_deaths: number;
-    total_recovered: number;
-    daily_recovered: number;
 }
 
 export interface MpoxData {
@@ -28,9 +25,13 @@ export interface MpoxData {
 }
 
 export interface CovidTotals {
-    total_cases: string;
-    total_deaths: string;
-    total_recovered: string;
+    total_cases: number;
+    total_deaths: number;
+}
+
+export interface MpoxSummary {
+    country: string;
+    latest_cases: number;
 }
 
 export interface StatsSummary {
@@ -48,11 +49,7 @@ export interface StatsSummary {
 export const api = {
     // COVID public endpoints
     getLatestCovidData: async (): Promise<CovidData[]> => {
-        const response = await axios.get(`${API_URL}/covid/data?limit=186`, {
-            headers: {
-                Authorization: `Bearer ${API_TOKEN}`,
-            },
-        });
+        const response = await axios.get(`${API_URL}/covid/public/latest`);
         return response.data;
     },
 
@@ -69,7 +66,7 @@ export const api = {
     },
 
     // MPOX public endpoints
-    getMpoxSummary: async (): Promise<MpoxData[]> => {
+    getMpoxSummary: async (): Promise<MpoxSummary[]> => {
         const response = await axios.get(`${API_URL}/mpox/public/summary`);
         return response.data;
     },

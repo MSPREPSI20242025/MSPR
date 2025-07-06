@@ -3,12 +3,12 @@ __pycache__/
 .idea/
 .venv
 .env
+raw_data/
 data1/
 data2/
 data3/
 filtered/
 downloads/
-split/
 
 # Mac OS
 # General

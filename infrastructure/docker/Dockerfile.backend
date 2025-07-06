@@ -1,0 +1,65 @@
+# Construction multi-étapes pour le backend Node.js/TypeScript
+FROM node:20-alpine AS builder
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Installer pnpm
+RUN npm install -g pnpm
+
+# Copier les fichiers de package
+COPY rest/package.json rest/pnpm-lock.yaml ./
+
+# Installer les dépendances
+RUN pnpm install --frozen-lockfile
+
+# Copier le code source
+COPY rest/ ./
+
+# Générer le client Prisma
+RUN pnpm dlx prisma generate
+
+# Construire l'application
+RUN pnpm build
+
+# Étape de production
+FROM node:20-alpine AS production
+
+# Installer les mises à jour de sécurité
+RUN apk update && apk upgrade
+
+# Créer un utilisateur non-root
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S backend -u 1001
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Installer pnpm
+RUN npm install -g pnpm
+
+# Copier les fichiers de package
+COPY rest/package.json rest/pnpm-lock.yaml ./
+
+# Installer uniquement les dépendances de production
+RUN pnpm install --prod --frozen-lockfile
+
+# Copier l'application construite depuis l'étape builder
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/docs ./docs
+
+# Copier le schéma Prisma pour les migrations
+COPY rest/prisma ./prisma
+
+# Générer le client Prisma dans l'étape de production
+RUN pnpm dlx prisma generate
+
+# Changer la propriété pour l'utilisateur non-root
+RUN chown -R backend:nodejs /app
+USER backend
+
+# Exposer le port
+EXPOSE 3001
+
+# Démarrer l'application
+CMD ["pnpm", "start"]

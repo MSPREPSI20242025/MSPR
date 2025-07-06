@@ -3,17 +3,19 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
-
-const navigation = [
-  { name: 'Overview', href: '/' },
-  { name: 'COVID-19', href: '/covid' },
-  { name: 'MPOX', href: '/mpox' },
-  { name: 'Compare', href: '/compare' },
-  { name: 'All Data', href: '/data' },
-];
+import { useTranslation } from '../TranslationProvider';
 
 export function Navigation() {
   const pathname = usePathname();
+  const { t } = useTranslation();
+
+  const navigation = [
+    { name: t('nav.home'), href: '/' },
+    { name: t('nav.covid'), href: '/covid' },
+    { name: t('nav.mpox'), href: '/mpox' },
+    { name: t('nav.compare'), href: '/compare' },
+    { name: t('nav.allData'), href: '/data' },
+  ];
 
   return (
     <nav className="bg-white dark:bg-gray-800 shadow">
@@ -21,7 +23,7 @@ export function Navigation() {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-gray-900 dark:text-white">Epidemic Dashboard</span>
+              <span className="text-xl font-bold text-gray-900 dark:text-white">{t('home.title')}</span>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {navigation.map((item) => (

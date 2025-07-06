@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardStat } from "@/components/ui/Card";
 import { api, CovidData, MpoxData, StatsSummary } from "@/services/api";
+import { useTranslation } from "@/components/TranslationProvider";
 import {
     LineChart,
     Line,
@@ -17,6 +18,7 @@ import {
 } from "recharts";
 
 export default function ComparePage() {
+    const { t } = useTranslation();
     const [statsSummary, setStatsSummary] = useState<StatsSummary | null>(null);
     const [aggregatedCovidData, setAggregatedCovidData] = useState<CovidData[]>(
         []
@@ -25,12 +27,16 @@ export default function ComparePage() {
         []
     );
     const [selectedCountry, setSelectedCountry] = useState<string>("Global");
-    const [covidTimeRange, setCovidTimeRange] = useState<number>(30); // Default to 30 days
-    const [mpoxTimeRange, setMpoxTimeRange] = useState<number>(30); // Default to 30 days
+    const [covidTimeRange, setCovidTimeRange] = useState<number>(90); // Default to 90 days
+    const [mpoxTimeRange, setMpoxTimeRange] = useState<number>(90); // Default to 90 days
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoading(true);
+                setError(null);
                 const [summary, covidData, mpoxData] = await Promise.all([
                     api.getStatsSummary(),
                     api.getAllCovidData(undefined, 100_000_000),
@@ -38,13 +44,16 @@ export default function ComparePage() {
                 ]);
                 setStatsSummary(summary);
 
-                const aggregatedCovid = aggregateByDay(covidData, "covid");
-                const aggregatedMpox = aggregateByDay(mpoxData, "mpox");
+                const aggregatedCovid = aggregateByWeek(covidData, "covid");
+                const aggregatedMpox = aggregateByWeek(mpoxData, "mpox");
 
                 setAggregatedCovidData(aggregatedCovid);
                 setAggregatedMpoxData(aggregatedMpox);
             } catch (error) {
                 console.error("Error fetching data:", error);
+                setError(t('pages.compare.error', 'Unable to load data. Please check if the API server and database are running.'));
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -54,69 +63,58 @@ export default function ComparePage() {
     const handleCountryChange = async (country: string) => {
         setSelectedCountry(country);
         try {
+            setError(null);
             const [covidData, mpoxData] = await Promise.all([
-                api.getAllCovidData(country, 1000),
-                api.getAllMpoxData(country, 1000),
+                api.getAllCovidData(country === "Global" ? undefined : country, 1000),
+                api.getAllMpoxData(country === "Global" ? undefined : country, 1000),
             ]);
 
-            const aggregatedCovid = aggregateByDay(covidData, "covid");
-            const aggregatedMpox = aggregateByDay(mpoxData, "mpox");
+            const aggregatedCovid = aggregateByWeek(covidData, "covid");
+            const aggregatedMpox = aggregateByWeek(mpoxData, "mpox");
 
             setAggregatedCovidData(aggregatedCovid);
             setAggregatedMpoxData(aggregatedMpox);
         } catch (error) {
             console.error("Error fetching country data:", error);
+            setError(t('pages.compare.error', 'Unable to load country data. Please check if the API server and database are running.'));
         }
     };
 
-    // Function to aggregate data by day
-    const aggregateByDay = (data: any[], type: "covid" | "mpox"): any[] => {
+    // Function to get week start date (Monday)
+    const getWeekStart = (date: Date): string => {
+        const d = new Date(date);
+        const day = d.getDay();
+        const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+        d.setDate(diff);
+        return d.toISOString().split('T')[0];
+    };
+
+    // Function to aggregate data by week
+    const aggregateByWeek = (data: any[], type: "covid" | "mpox"): any[] => {
         const aggregated: { [key: string]: any } = {};
 
         data.forEach((item) => {
-            const date = item.date.split("T")[0]; // Extract just the date part
+            const itemDate = new Date(item.date);
+            const weekStart = getWeekStart(itemDate);
 
-            if (!aggregated[date]) {
-                if (type === "covid") {
-                    aggregated[date] = {
-                        date,
-                        country:
-                            selectedCountry === "Global"
-                                ? "Global"
-                                : item.country,
-                        total_cases: 0,
-                        new_cases: 0,
-                        active_cases: 0,
-                        total_deaths: 0,
-                        new_deaths: 0,
-                        total_recovered: 0,
-                        daily_recovered: 0,
-                    };
-                } else {
-                    aggregated[date] = {
-                        date,
-                        country:
-                            selectedCountry === "Global"
-                                ? "Global"
-                                : item.country,
-                        total_cases: 0,
-                        new_cases: 0,
-                        total_deaths: 0,
-                        new_deaths: 0,
-                    };
-                }
+            if (!aggregated[weekStart]) {
+                aggregated[weekStart] = {
+                    date: weekStart,
+                    country:
+                        selectedCountry === "Global"
+                            ? "Global"
+                            : item.country,
+                    total_cases: 0,
+                    new_cases: 0,
+                    total_deaths: 0,
+                    new_deaths: 0,
+                };
             }
 
-            aggregated[date].total_cases += item.total_cases;
-            aggregated[date].new_cases += item.new_cases;
-            aggregated[date].total_deaths += item.total_deaths;
-            aggregated[date].new_deaths += item.new_deaths;
-
-            if (type === "covid") {
-                aggregated[date].active_cases += item.active_cases;
-                aggregated[date].total_recovered += item.total_recovered;
-                aggregated[date].daily_recovered += item.daily_recovered;
-            }
+            aggregated[weekStart].total_cases += item.total_cases;
+            aggregated[weekStart].new_cases += item.new_cases;
+            aggregated[weekStart].total_deaths += item.total_deaths;
+            aggregated[weekStart].new_deaths += item.new_deaths;
         });
 
         return Object.values(aggregated).sort(
@@ -128,9 +126,9 @@ export default function ComparePage() {
     const filterCovidDataByTimeRange = (data: any[], days: number): any[] => {
         if (days === 0) return data; // 0 means all data
 
-        const refDate = new Date("2020-07-27");
-        const cutoffDate = new Date(refDate);
-        cutoffDate.setDate(refDate.getDate() - days);
+        const today = new Date();
+        const cutoffDate = new Date(today);
+        cutoffDate.setDate(today.getDate() - days);
 
         return data.filter((item) => {
             const itemDate = new Date(item.date);
@@ -142,9 +140,9 @@ export default function ComparePage() {
     const filterMpoxDataByTimeRange = (data: any[], days: number): any[] => {
         if (days === 0) return data; // 0 means all data
 
-        const refDate = new Date("2023-05-09");
-        const cutoffDate = new Date(refDate);
-        cutoffDate.setDate(refDate.getDate() - days);
+        const today = new Date();
+        const cutoffDate = new Date(today);
+        cutoffDate.setDate(today.getDate() - days);
 
         return data.filter((item) => {
             const itemDate = new Date(item.date);
@@ -162,11 +160,35 @@ export default function ComparePage() {
         mpoxTimeRange
     );
 
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-lg text-gray-600 dark:text-gray-400">{t('data.loading')}</div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <div className="text-red-600 dark:text-red-400 mb-4">{error}</div>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                    Compare COVID-19 & MPOX
+                    {t('pages.compare.title')}
                 </h1>
                 <div className="flex items-center space-x-4">
                     <div>
@@ -196,7 +218,7 @@ export default function ComparePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card>
                     <CardStat
-                        title="COVID Cases"
+                        title={t('data.covidCases')}
                         value={
                             statsSummary?.covid.total_cases.toLocaleString() ||
                             "Loading..."
@@ -206,7 +228,7 @@ export default function ComparePage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="COVID Deaths"
+                        title={t('data.covidDeaths')}
                         value={
                             statsSummary?.covid.total_deaths.toLocaleString() ||
                             "Loading..."
@@ -216,7 +238,7 @@ export default function ComparePage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="MPOX Cases"
+                        title={t('data.mpoxCases')}
                         value={
                             statsSummary?.mpox.total_cases.toLocaleString() ||
                             "Loading..."
@@ -226,7 +248,7 @@ export default function ComparePage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="MPOX Deaths"
+                        title={t('data.mpoxDeaths')}
                         value={
                             statsSummary?.mpox.total_deaths.toLocaleString() ||
                             "Loading..."
@@ -237,7 +259,7 @@ export default function ComparePage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="COVID-19 Daily Cases">
+                <Card title={t('charts.covidWeeklyNewCases')}>
                     <div className="flex justify-end mb-2">
                         <div>
                             <label
@@ -254,11 +276,9 @@ export default function ComparePage() {
                                 className="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 aria-label="Select time range for COVID data">
                                 <option value="0">All time</option>
-                                <option value="7">Last 7 days</option>
-                                <option value="14">Last 14 days</option>
-                                <option value="30">Last 30 days</option>
                                 <option value="90">Last 90 days</option>
-                                <option value="365">Last year</option>
+                                <option value="180">Last 180 days</option>
+                                <option value="365">Last 365 days</option>
                             </select>
                         </div>
                     </div>
@@ -266,7 +286,13 @@ export default function ComparePage() {
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={filteredCovidData}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" />
+                                <XAxis 
+                                    dataKey="date" 
+                                    tickFormatter={(value) => {
+                                        const date = new Date(value);
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    }}
+                                />
                                 <YAxis />
                                 <Tooltip />
                                 <Legend />
@@ -276,6 +302,26 @@ export default function ComparePage() {
                                     stroke="#8884d8"
                                     name="COVID New Cases"
                                 />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </Card>
+
+                <Card title={t('charts.covidWeeklyNewDeaths')}>
+                    <div className="h-[400px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={filteredCovidData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis 
+                                    dataKey="date" 
+                                    tickFormatter={(value) => {
+                                        const date = new Date(value);
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    }}
+                                />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
                                 <Line
                                     type="monotone"
                                     dataKey="new_deaths"
@@ -286,8 +332,10 @@ export default function ComparePage() {
                         </ResponsiveContainer>
                     </div>
                 </Card>
+            </div>
 
-                <Card title="MPOX Daily Cases">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card title={t('charts.mpoxWeeklyNewCases')}>
                     <div className="flex justify-end mb-2">
                         <div>
                             <label
@@ -304,11 +352,9 @@ export default function ComparePage() {
                                 className="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 aria-label="Select time range for MPOX data">
                                 <option value="0">All time</option>
-                                <option value="7">Last 7 days</option>
-                                <option value="14">Last 14 days</option>
-                                <option value="30">Last 30 days</option>
                                 <option value="90">Last 90 days</option>
-                                <option value="365">Last year</option>
+                                <option value="180">Last 180 days</option>
+                                <option value="365">Last 365 days</option>
                             </select>
                         </div>
                     </div>
@@ -316,7 +362,13 @@ export default function ComparePage() {
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={filteredMpoxData}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" />
+                                <XAxis 
+                                    dataKey="date" 
+                                    tickFormatter={(value) => {
+                                        const date = new Date(value);
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    }}
+                                />
                                 <YAxis />
                                 <Tooltip />
                                 <Legend />
@@ -326,6 +378,26 @@ export default function ComparePage() {
                                     stroke="#8884d8"
                                     name="MPOX New Cases"
                                 />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </Card>
+
+                <Card title={t('charts.mpoxWeeklyNewDeaths')}>
+                    <div className="h-[400px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={filteredMpoxData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis 
+                                    dataKey="date" 
+                                    tickFormatter={(value) => {
+                                        const date = new Date(value);
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    }}
+                                />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
                                 <Line
                                     type="monotone"
                                     dataKey="new_deaths"
@@ -339,12 +411,18 @@ export default function ComparePage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="COVID-19 Cases Distribution">
+                <Card title={t('charts.covidWeeklyCasesDistribution')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={filteredCovidData}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" />
+                                <XAxis 
+                                    dataKey="date" 
+                                    tickFormatter={(value) => {
+                                        const date = new Date(value);
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    }}
+                                />
                                 <YAxis />
                                 <Tooltip />
                                 <Legend />
@@ -353,6 +431,26 @@ export default function ComparePage() {
                                     fill="#8884d8"
                                     name="COVID New Cases"
                                 />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </Card>
+
+                <Card title={t('charts.covidWeeklyDeathsDistribution')}>
+                    <div className="h-[400px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={filteredCovidData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis 
+                                    dataKey="date" 
+                                    tickFormatter={(value) => {
+                                        const date = new Date(value);
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    }}
+                                />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
                                 <Bar
                                     dataKey="new_deaths"
                                     fill="#82ca9d"
@@ -362,13 +460,21 @@ export default function ComparePage() {
                         </ResponsiveContainer>
                     </div>
                 </Card>
+            </div>
 
-                <Card title="MPOX Cases Distribution">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card title={t('charts.mpoxWeeklyCasesDistribution')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={filteredMpoxData}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" />
+                                <XAxis 
+                                    dataKey="date" 
+                                    tickFormatter={(value) => {
+                                        const date = new Date(value);
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    }}
+                                />
                                 <YAxis />
                                 <Tooltip />
                                 <Legend />
@@ -377,6 +483,26 @@ export default function ComparePage() {
                                     fill="#8884d8"
                                     name="MPOX New Cases"
                                 />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </Card>
+
+                <Card title={t('charts.mpoxWeeklyDeathsDistribution')}>
+                    <div className="h-[400px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={filteredMpoxData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis 
+                                    dataKey="date" 
+                                    tickFormatter={(value) => {
+                                        const date = new Date(value);
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    }}
+                                />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
                                 <Bar
                                     dataKey="new_deaths"
                                     fill="#82ca9d"
