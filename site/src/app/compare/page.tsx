@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardStat } from "@/components/ui/Card";
 import { api, CovidData, MpoxData, StatsSummary } from "@/services/api";
+import { useTranslation } from "@/components/TranslationProvider";
 import {
     LineChart,
     Line,
@@ -17,6 +18,7 @@ import {
 } from "recharts";
 
 export default function ComparePage() {
+    const { t } = useTranslation();
     const [statsSummary, setStatsSummary] = useState<StatsSummary | null>(null);
     const [aggregatedCovidData, setAggregatedCovidData] = useState<CovidData[]>(
         []
@@ -49,7 +51,7 @@ export default function ComparePage() {
                 setAggregatedMpoxData(aggregatedMpox);
             } catch (error) {
                 console.error("Error fetching data:", error);
-                setError("Unable to load data. Please check if the API server and database are running.");
+                setError(t('pages.compare.error', 'Unable to load data. Please check if the API server and database are running.'));
             } finally {
                 setLoading(false);
             }
@@ -74,7 +76,7 @@ export default function ComparePage() {
             setAggregatedMpoxData(aggregatedMpox);
         } catch (error) {
             console.error("Error fetching country data:", error);
-            setError("Unable to load country data. Please check if the API server and database are running.");
+            setError(t('pages.compare.error', 'Unable to load country data. Please check if the API server and database are running.'));
         }
     };
 
@@ -161,7 +163,7 @@ export default function ComparePage() {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <div className="text-lg text-gray-600 dark:text-gray-400">Loading data...</div>
+                <div className="text-lg text-gray-600 dark:text-gray-400">{t('data.loading')}</div>
             </div>
         );
     }
@@ -186,7 +188,7 @@ export default function ComparePage() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                    Compare COVID-19 & MPOX
+                    {t('pages.compare.title')}
                 </h1>
                 <div className="flex items-center space-x-4">
                     <div>
@@ -216,7 +218,7 @@ export default function ComparePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card>
                     <CardStat
-                        title="COVID Cases"
+                        title={t('data.covidCases')}
                         value={
                             statsSummary?.covid.total_cases.toLocaleString() ||
                             "Loading..."
@@ -226,7 +228,7 @@ export default function ComparePage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="COVID Deaths"
+                        title={t('data.covidDeaths')}
                         value={
                             statsSummary?.covid.total_deaths.toLocaleString() ||
                             "Loading..."
@@ -236,7 +238,7 @@ export default function ComparePage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="MPOX Cases"
+                        title={t('data.mpoxCases')}
                         value={
                             statsSummary?.mpox.total_cases.toLocaleString() ||
                             "Loading..."
@@ -246,7 +248,7 @@ export default function ComparePage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="MPOX Deaths"
+                        title={t('data.mpoxDeaths')}
                         value={
                             statsSummary?.mpox.total_deaths.toLocaleString() ||
                             "Loading..."
@@ -257,7 +259,7 @@ export default function ComparePage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="COVID-19 Weekly New Cases">
+                <Card title={t('charts.covidWeeklyNewCases')}>
                     <div className="flex justify-end mb-2">
                         <div>
                             <label
@@ -305,7 +307,7 @@ export default function ComparePage() {
                     </div>
                 </Card>
 
-                <Card title="COVID-19 Weekly New Deaths">
+                <Card title={t('charts.covidWeeklyNewDeaths')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={filteredCovidData}>
@@ -333,7 +335,7 @@ export default function ComparePage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="MPOX Weekly New Cases">
+                <Card title={t('charts.mpoxWeeklyNewCases')}>
                     <div className="flex justify-end mb-2">
                         <div>
                             <label
@@ -381,7 +383,7 @@ export default function ComparePage() {
                     </div>
                 </Card>
 
-                <Card title="MPOX Weekly New Deaths">
+                <Card title={t('charts.mpoxWeeklyNewDeaths')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={filteredMpoxData}>
@@ -409,7 +411,7 @@ export default function ComparePage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="COVID-19 Weekly Cases Distribution">
+                <Card title={t('charts.covidWeeklyCasesDistribution')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={filteredCovidData}>
@@ -434,7 +436,7 @@ export default function ComparePage() {
                     </div>
                 </Card>
 
-                <Card title="COVID-19 Weekly Deaths Distribution">
+                <Card title={t('charts.covidWeeklyDeathsDistribution')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={filteredCovidData}>
@@ -461,7 +463,7 @@ export default function ComparePage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="MPOX Weekly Cases Distribution">
+                <Card title={t('charts.mpoxWeeklyCasesDistribution')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={filteredMpoxData}>
@@ -486,7 +488,7 @@ export default function ComparePage() {
                     </div>
                 </Card>
 
-                <Card title="MPOX Weekly Deaths Distribution">
+                <Card title={t('charts.mpoxWeeklyDeathsDistribution')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={filteredMpoxData}>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardStat } from "@/components/ui/Card";
 import { api, MpoxData, StatsSummary } from "@/services/api";
+import { useTranslation } from "@/components/TranslationProvider";
 import {
     LineChart,
     Line,
@@ -17,6 +18,7 @@ import {
 } from "recharts";
 
 export default function MpoxPage() {
+    const { t } = useTranslation();
     const [statsSummary, setStatsSummary] = useState<StatsSummary | null>(null);
     const [aggregatedData, setAggregatedData] = useState<MpoxData[]>([]);
     const [selectedCountry, setSelectedCountry] = useState<string>("Global");
@@ -38,7 +40,7 @@ export default function MpoxPage() {
                 setAggregatedData(aggregated);
             } catch (error) {
                 console.error("Error fetching data:", error);
-                setError("Unable to load data. Please check if the API server and database are running.");
+                setError(t('pages.mpox.error', 'Unable to load data. Please check if the API server and database are running.'));
             } finally {
                 setLoading(false);
             }
@@ -56,7 +58,7 @@ export default function MpoxPage() {
             setAggregatedData(aggregated);
         } catch (error) {
             console.error("Error fetching country data:", error);
-            setError("Unable to load country data. Please check if the API server and database are running.");
+            setError(t('pages.mpox.error', 'Unable to load country data. Please check if the API server and database are running.'));
         }
     };
 
@@ -123,7 +125,7 @@ export default function MpoxPage() {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <div className="text-lg text-gray-600 dark:text-gray-400">Loading data...</div>
+                <div className="text-lg text-gray-600 dark:text-gray-400">{t('data.loading')}</div>
             </div>
         );
     }
@@ -148,7 +150,7 @@ export default function MpoxPage() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                    MPOX Dashboard
+                    {t('pages.mpox.title')}
                 </h1>
                 <div className="flex items-center space-x-4">
                     <div>
@@ -198,7 +200,7 @@ export default function MpoxPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card>
                     <CardStat
-                        title="Total Cases"
+                        title={t('data.totalCases')}
                         value={
                             statsSummary?.mpox.total_cases.toLocaleString() ||
                             "Loading..."
@@ -208,7 +210,7 @@ export default function MpoxPage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="Total Deaths"
+                        title={t('data.totalDeaths')}
                         value={
                             statsSummary?.mpox.total_deaths.toLocaleString() ||
                             "Loading..."
@@ -218,7 +220,7 @@ export default function MpoxPage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="New Cases (Latest)"
+                        title={t('data.newCasesLatest')}
                         value={
                             filteredData.length > 0
                                 ? filteredData[
@@ -231,7 +233,7 @@ export default function MpoxPage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="New Deaths (Latest)"
+                        title={t('data.newDeathsLatest')}
                         value={
                             filteredData.length > 0
                                 ? filteredData[
@@ -245,7 +247,7 @@ export default function MpoxPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="Weekly New Cases">
+                <Card title={t('charts.weeklyNewCases')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={filteredData}>
@@ -271,7 +273,7 @@ export default function MpoxPage() {
                     </div>
                 </Card>
 
-                <Card title="Weekly New Deaths">
+                <Card title={t('charts.weeklyNewDeaths')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={filteredData}>
@@ -299,7 +301,7 @@ export default function MpoxPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="Weekly Cases Distribution">
+                <Card title={t('charts.weeklyCasesDistribution')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={filteredData}>
@@ -324,7 +326,7 @@ export default function MpoxPage() {
                     </div>
                 </Card>
 
-                <Card title="Weekly Deaths Distribution">
+                <Card title={t('charts.weeklyDeathsDistribution')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={filteredData}>

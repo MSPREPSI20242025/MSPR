@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardStat } from "@/components/ui/Card";
 import { api, CovidData, CovidTotals } from "@/services/api";
+import { useTranslation } from "@/components/TranslationProvider";
 import {
     LineChart,
     Line,
@@ -17,6 +18,7 @@ import {
 } from "recharts";
 
 export default function CovidPage() {
+    const { t } = useTranslation();
     const [covidTotals, setCovidTotals] = useState<CovidTotals | null>(null);
     const [aggregatedData, setAggregatedData] = useState<CovidData[]>([]);
     const [selectedCountry, setSelectedCountry] = useState<string>("Global");
@@ -200,7 +202,7 @@ export default function CovidPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card>
                     <CardStat
-                        title="Total Cases"
+                        title={t('data.totalCases')}
                         value={
                             Number(covidTotals?.total_cases).toLocaleString() ||
                             "Loading..."
@@ -210,7 +212,7 @@ export default function CovidPage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="Total Deaths"
+                        title={t('data.totalDeaths')}
                         value={
                             Number(
                                 covidTotals?.total_deaths
@@ -221,7 +223,7 @@ export default function CovidPage() {
                 </Card>
                 <Card>
                     <CardStat
-                        title="Active Cases"
+                        title={t('data.activeCases')}
                         value={activeCases}
                         trend="down"
                     />
@@ -229,7 +231,7 @@ export default function CovidPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="Weekly New Cases">
+                <Card title={t('charts.weeklyNewCases')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={filteredData}>
@@ -248,14 +250,14 @@ export default function CovidPage() {
                                     type="monotone"
                                     dataKey="new_cases"
                                     stroke="#8884d8"
-                                    name="New Cases"
+                                    name={t('data.newCases')}
                                 />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
                 </Card>
 
-                <Card title="Weekly New Deaths">
+                <Card title={t('charts.weeklyNewDeaths')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={filteredData}>
@@ -274,7 +276,7 @@ export default function CovidPage() {
                                     type="monotone"
                                     dataKey="new_deaths"
                                     stroke="#82ca9d"
-                                    name="New Deaths"
+                                    name={t('data.newDeaths')}
                                 />
                             </LineChart>
                         </ResponsiveContainer>
@@ -283,7 +285,7 @@ export default function CovidPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="Weekly Cases Distribution">
+                <Card title={t('charts.weeklyCasesDistribution')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={filteredData}>
@@ -301,14 +303,14 @@ export default function CovidPage() {
                                 <Bar
                                     dataKey="new_cases"
                                     fill="#8884d8"
-                                    name="New Cases"
+                                    name={t('data.newCases')}
                                 />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </Card>
 
-                <Card title="Weekly Deaths Distribution">
+                <Card title={t('charts.weeklyDeathsDistribution')}>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={filteredData}>
@@ -326,7 +328,7 @@ export default function CovidPage() {
                                 <Bar
                                     dataKey="new_deaths"
                                     fill="#82ca9d"
-                                    name="New Deaths"
+                                    name={t('data.newDeaths')}
                                 />
                             </BarChart>
                         </ResponsiveContainer>
