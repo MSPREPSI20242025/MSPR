@@ -9,33 +9,33 @@
     <meta name="generator" content="Retype 3.11.0">
 
     <!-- Primary Meta Tags -->
-    <title>Authentification | MSPR 61</title>
-    <meta name="title" content="Authentification | MSPR 61">
-    <meta name="description" content="L'API de données COVID et MPOX utilise un système d'authentification simple par jeton bearer pour protéger certains points d'accès.">
+    <title>CI/CD Documentation | MSPR 61</title>
+    <meta name="title" content="CI/CD Documentation | MSPR 61">
+    <meta name="description" content="This directory contains comprehensive documentation for the CI/CD pipeline implementation of the MSPR 3 pandemic surveillance platform.">
 
     <!-- Canonical -->
-    <link rel="canonical" href="/rest/pour-commencer/authentication/">
+    <link rel="canonical" href="/ci-cd/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="/rest/pour-commencer/authentication/">
-    <meta property="og:title" content="Authentification | MSPR 61">
-    <meta property="og:description" content="L'API de données COVID et MPOX utilise un système d'authentification simple par jeton bearer pour protéger certains points d'accès.">
+    <meta property="og:url" content="/ci-cd/">
+    <meta property="og:title" content="CI/CD Documentation | MSPR 61">
+    <meta property="og:description" content="This directory contains comprehensive documentation for the CI/CD pipeline implementation of the MSPR 3 pandemic surveillance platform.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="/rest/pour-commencer/authentication/">
-    <meta property="twitter:title" content="Authentification | MSPR 61">
-    <meta property="twitter:description" content="L'API de données COVID et MPOX utilise un système d'authentification simple par jeton bearer pour protéger certains points d'accès.">
+    <meta property="twitter:url" content="/ci-cd/">
+    <meta property="twitter:title" content="CI/CD Documentation | MSPR 61">
+    <meta property="twitter:description" content="This directory contains comprehensive documentation for the CI/CD pipeline implementation of the MSPR 3 pandemic surveillance platform.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="../../../resources/css/retype.css?v=3.11.0.805201124387" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.11.0.805201124387" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.11.0.805201124387" data-turbo-eval="false" defer></script>
-    <script data-cfasync="false" src="../../../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.11.0.805201124387" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.11.0.805201124387" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.805201124387" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.805201124387" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.805201124387" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -50,7 +50,7 @@
                 <!-- Logo -->
                 <div class="flex items-center justify-between h-full py-2 md:w-75">
                     <div class="flex items-center px-2 md:px-6">
-                        <a id="retype-branding-logo" href="../../../" class="flex items-center leading-snug text-2xl">
+                        <a id="retype-branding-logo" href="../" class="flex items-center leading-snug text-2xl">
                             <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">MSPR 6.1</span>
                         </a>
                     </div>
@@ -66,7 +66,7 @@
                                 <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="https://github.com/ghoostyy/mspr61">GitHub</a>
                             </li>
                             <li class="mr-6">
-                                <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="../../../rest/api-docs">API Docs</a>
+                                <a class="py-2 md:mb-0 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="../rest/api-docs">API Docs</a>
                             </li>
         
                         </ul>
@@ -146,7 +146,7 @@
                                         <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="https://github.com/ghoostyy/mspr61">GitHub</a>
                                     </li>
                                     <li class="mr-6">
-                                        <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="../../../rest/api-docs">API Docs</a>
+                                        <a class="block py-1 inline-flex items-center text-sm whitespace-nowrap transition-colors duration-200 ease-linear md:text-header-text font-header-text-weight hover:text-header-text-hover" href="../rest/api-docs">API Docs</a>
                                     </li>
             
                                 </ul>
@@ -170,164 +170,425 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="retype-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="authentification" class="break-words">
+<doc-anchor-target id="cicd-documentation" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#authentification">#</doc-anchor-trigger>
-        <span>Authentification</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#cicd-documentation">#</doc-anchor-trigger>
+        <span>CI/CD Documentation</span>
     </h1>
 </doc-anchor-target>
-<div class="-mt-3 mb-12 flex flex-wrap text-sm text-gray-400 dark:text-dark-350 items-center print:justify-center">
-    <div>In&nbsp;</div>
-    <div><a href="../../../categories/api-rest/">API REST</a></div>
-</div>
-
-<p>L&#x27;API de données COVID et MPOX utilise un système d&#x27;authentification simple par jeton bearer pour protéger certains points d&#x27;accès. Ce guide explique comment s&#x27;authentifier avec l&#x27;API.</p>
-<doc-anchor-target id="méthode-dauthentification">
+<p>This directory contains comprehensive documentation for the CI/CD pipeline implementation of the MSPR 3 pandemic surveillance platform.</p>
+<doc-anchor-target id="-documentation-structure">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#méthode-dauthentification">#</doc-anchor-trigger>
-        <span>Méthode d&#x27;Authentification</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#-documentation-structure">#</doc-anchor-trigger>
+        <span><span class="docs-emoji">&#x1F4C1;</span> Documentation Structure</span>
     </h2>
 </doc-anchor-target>
-<p>L&#x27;API utilise un jeton bearer statique pour l&#x27;authentification. Lors de l&#x27;envoi de requêtes aux points d&#x27;accès protégés, vous devez inclure ce jeton dans l&#x27;en-tête <code v-pre>Authorization</code>.</p>
-<doc-anchor-target id="inclure-le-jeton">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#inclure-le-jeton">#</doc-anchor-trigger>
-        <span>Inclure le Jeton</span>
-    </h2>
-</doc-anchor-target>
-<p>Ajoutez l&#x27;en-tête suivant à vos requêtes HTTP :</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-http"><code v-pre class="language-http">Authorization: Bearer your-api-token</code></pre>
-</doc-codeblock></div>
-<p>Remplacez <code v-pre>your-api-token</code> par le véritable jeton API qui vous a été fourni.</p>
-<doc-anchor-target id="exemple-de-requête-avec-authentification">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#exemple-de-requête-avec-authentification">#</doc-anchor-trigger>
-        <span>Exemple de Requête avec Authentification</span>
-    </h2>
-</doc-anchor-target>
-<p>Utilisation de curl :</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-bash"><code v-pre class="language-bash">curl -X GET &quot;https://api.yourdomain.com/api/covid/data&quot; \
-  -H &quot;Authorization: Bearer your-api-token&quot;</code></pre>
-</doc-codeblock></div>
-<p>Utilisation de JavaScript fetch :</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">fetch('https://api.yourdomain.com/api/covid/data', {
-  headers: {
-    'Authorization': 'Bearer your-api-token'
-  }
-})
-.then(response =&gt; response.json())
-.then(data =&gt; console.log(data));</code></pre>
-</doc-codeblock></div>
-<p>Utilisation d&#x27;Axios :</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">import axios from 'axios';
-
-axios.get('https://api.yourdomain.com/api/covid/data', {
-  headers: {
-    'Authorization': 'Bearer your-api-token'
-  }
-})
-.then(response =&gt; console.log(response.data));</code></pre>
-</doc-codeblock></div>
-<doc-anchor-target id="réponses-derreur">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#réponses-derreur">#</doc-anchor-trigger>
-        <span>Réponses d&#x27;Erreur</span>
-    </h2>
-</doc-anchor-target>
-<p>Si l&#x27;authentification échoue, vous recevrez une réponse <code v-pre>401 Unauthorized</code> :</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-json"><code v-pre class="language-json">{
-  &quot;error&quot;: &quot;Accès refusé. Aucun jeton fourni.&quot;
-}</code></pre>
-</doc-codeblock></div>
-<p>Ou :</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-json"><code v-pre class="language-json">{
-  &quot;error&quot;: &quot;Jeton invalide.&quot;
-}</code></pre>
-</doc-codeblock></div>
-<doc-anchor-target id="obtenir-un-jeton-api">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#obtenir-un-jeton-api">#</doc-anchor-trigger>
-        <span>Obtenir un Jeton API</span>
-    </h2>
-</doc-anchor-target>
-<p>Contactez l&#x27;administrateur de l&#x27;API pour obtenir un jeton API. Chaque client ou application doit utiliser son propre jeton unique.</p>
-<doc-anchor-target id="sécurité-du-jeton">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#sécurité-du-jeton">#</doc-anchor-trigger>
-        <span>Sécurité du Jeton</span>
-    </h2>
-</doc-anchor-target>
-<p>Pour maintenir la sécurité :</p>
-<ul>
-<li>Gardez votre jeton API confidentiel</li>
-<li>N&#x27;incluez pas le jeton directement dans le code côté client</li>
-<li>Utilisez des variables d&#x27;environnement pour stocker le jeton</li>
-<li>Faites une rotation périodique des jetons</li>
-<li>Utilisez HTTPS pour empêcher l&#x27;interception du jeton</li>
-</ul>
-<doc-anchor-target id="variables-denvironnement">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#variables-denvironnement">#</doc-anchor-trigger>
-        <span>Variables d&#x27;Environnement</span>
-    </h2>
-</doc-anchor-target>
-<p>Pour les applications Node.js, stockez votre jeton dans une variable d&#x27;environnement :</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Charger les variables d'environnement depuis le fichier .env
-require('dotenv').config();
-
-const API_TOKEN = process.env.API_TOKEN;
-
-// Utiliser le jeton dans les requêtes
-fetch('https://api.yourdomain.com/api/covid/data', {
-  headers: {
-    'Authorization': `Bearer ${API_TOKEN}`
-  }
-});</code></pre>
-</doc-codeblock></div>
-<p>Exemple de fichier <code v-pre>.env</code> :</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-none"><code v-pre class="language-none">API_TOKEN=your-api-token-here</code></pre>
-</doc-codeblock></div>
-<doc-anchor-target id="points-daccès-publics-vs-protégés">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#points-daccès-publics-vs-protégés">#</doc-anchor-trigger>
-        <span>Points d&#x27;Accès Publics vs. Protégés</span>
-    </h2>
-</doc-anchor-target>
-<p>N&#x27;oubliez pas que seuls certains points d&#x27;accès nécessitent une authentification. Les points d&#x27;accès publics peuvent être consultés sans jeton.</p>
-<doc-anchor-target id="points-daccès-publics-pas-dauthentification-requise">
+<doc-anchor-target id="core-documents">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#points-daccès-publics-pas-dauthentification-requise">#</doc-anchor-trigger>
-        <span>Points d&#x27;Accès Publics (Pas d&#x27;Authentification Requise)</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#core-documents">#</doc-anchor-trigger>
+        <span>Core Documents</span>
+    </h3>
+</doc-anchor-target>
+<ol>
+<li><p><strong><a href="github-actions-pipeline/">GitHub Actions Pipeline</a></strong></p>
+<ul>
+<li>Complete pipeline architecture overview</li>
+<li>Job definitions and workflows</li>
+<li>Environment configuration</li>
+<li>Monitoring and security features</li>
+</ul>
+</li>
+<li><p><strong><a href="pipeline-setup-guide/">Pipeline Setup Guide</a></strong></p>
+<ul>
+<li>Step-by-step setup instructions</li>
+<li>Configuration requirements</li>
+<li>Troubleshooting common issues</li>
+<li>Performance optimization tips</li>
+</ul>
+</li>
+<li><p><strong><a href="testing-strategy/">Testing Strategy</a></strong></p>
+<ul>
+<li>Comprehensive testing approach</li>
+<li>Test types and organization</li>
+<li>Quality metrics and coverage</li>
+<li>Security and performance testing</li>
+</ul>
+</li>
+</ol>
+<doc-anchor-target id="-quick-start">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#-quick-start">#</doc-anchor-trigger>
+        <span><span class="docs-emoji">&#x1F680;</span> Quick Start</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="prerequisites">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#prerequisites">#</doc-anchor-trigger>
+        <span>Prerequisites</span>
     </h3>
 </doc-anchor-target>
 <ul>
-<li><code v-pre>GET /covid/public/latest</code></li>
-<li><code v-pre>GET /covid/public/country/:country</code></li>
-<li><code v-pre>GET /covid/public/totals</code></li>
-<li><code v-pre>GET /mpox/public/summary</code></li>
+<li>GitHub repository with admin access</li>
+<li>Node.js 18.x or 20.x</li>
+<li>pnpm package manager</li>
+<li>PostgreSQL database</li>
 </ul>
-<doc-anchor-target id="points-daccès-protégés-authentification-requise">
+<doc-anchor-target id="basic-setup">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#points-daccès-protégés-authentification-requise">#</doc-anchor-trigger>
-        <span>Points d&#x27;Accès Protégés (Authentification Requise)</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#basic-setup">#</doc-anchor-trigger>
+        <span>Basic Setup</span>
     </h3>
 </doc-anchor-target>
-<p>Tous les autres points d&#x27;accès nécessitent une authentification, y compris tous les points d&#x27;accès de modification de données (POST, PUT, DELETE) et certains points d&#x27;accès de récupération de données (GET).</p>
-<doc-anchor-target id="prochaines-étapes">
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-bash"><code v-pre class="language-bash"># 1. Clone the repository
+git clone https://github.com/your-org/mspr.git
+
+# 2. Navigate to project directory
+cd mspr
+
+# 3. Enable GitHub Actions in repository settings
+# 4. Configure branch protection rules
+# 5. Set up required secrets (optional)</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="-pipeline-overview">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#prochaines-étapes">#</doc-anchor-trigger>
-        <span>Prochaines Étapes</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#-pipeline-overview">#</doc-anchor-trigger>
+        <span><span class="docs-emoji">&#x1F527;</span> Pipeline Overview</span>
     </h2>
 </doc-anchor-target>
-<p>Maintenant que vous comprenez l&#x27;authentification, vous pouvez explorer la <a href="../../api/overview/">Référence API</a> pour en savoir plus sur les points d&#x27;accès spécifiques.</p>
+<doc-anchor-target id="automated-workflows">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#automated-workflows">#</doc-anchor-trigger>
+        <span>Automated Workflows</span>
+    </h3>
+</doc-anchor-target>
+<p>The CI/CD pipeline includes three main jobs:</p>
+<ol>
+<li><p><strong>Test Job</strong> (<code v-pre>test</code>)</p>
+<ul>
+<li>Unit and integration testing</li>
+<li>Multi-version Node.js testing (18.x, 20.x)</li>
+<li>Code coverage reporting</li>
+<li>Test artifact generation</li>
+</ul>
+</li>
+<li><p><strong>Security Scan</strong> (<code v-pre>security-scan</code>)</p>
+<ul>
+<li>Dependency vulnerability scanning</li>
+<li>Security audit execution</li>
+<li>Compliance checking</li>
+</ul>
+</li>
+<li><p><strong>Integration Test</strong> (<code v-pre>integration-test</code>)</p>
+<ul>
+<li>End-to-end API testing</li>
+<li>Database integration validation</li>
+<li>Performance verification</li>
+</ul>
+</li>
+</ol>
+<doc-anchor-target id="trigger-events">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#trigger-events">#</doc-anchor-trigger>
+        <span>Trigger Events</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li><strong>Push</strong> to <code v-pre>main*</code> or <code v-pre>dev*</code> branches</li>
+<li><strong>Pull Requests</strong> to <code v-pre>main*</code> branches</li>
+<li><strong>Manual triggers</strong> via GitHub Actions UI</li>
+</ul>
+<doc-anchor-target id="-quality-gates">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#-quality-gates">#</doc-anchor-trigger>
+        <span><span class="docs-emoji">&#x1F4CA;</span> Quality Gates</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="code-coverage-requirements">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#code-coverage-requirements">#</doc-anchor-trigger>
+        <span>Code Coverage Requirements</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li><strong>Statements:</strong> &gt; 50%</li>
+<li><strong>Branches:</strong> &gt; 50%</li>
+<li><strong>Functions:</strong> &gt; 50%</li>
+<li><strong>Lines:</strong> &gt; 50%</li>
+</ul>
+<doc-anchor-target id="security-standards">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#security-standards">#</doc-anchor-trigger>
+        <span>Security Standards</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li>No critical or high vulnerabilities</li>
+<li>Dependency audit compliance</li>
+<li>Authentication security validation</li>
+</ul>
+<doc-anchor-target id="performance-benchmarks">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#performance-benchmarks">#</doc-anchor-trigger>
+        <span>Performance Benchmarks</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li>API response time &lt; 500ms</li>
+<li>Concurrent request handling (1000+ requests)</li>
+<li>Database query optimization</li>
+</ul>
+<doc-anchor-target id="-tools-and-technologies">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#-tools-and-technologies">#</doc-anchor-trigger>
+        <span><span class="docs-emoji">&#x1F6E0;&#xFE0F;</span> Tools and Technologies</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="testing-framework">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#testing-framework">#</doc-anchor-trigger>
+        <span>Testing Framework</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li><strong>Jest</strong> - JavaScript testing framework</li>
+<li><strong>Supertest</strong> - HTTP assertion library</li>
+<li><strong>ts-jest</strong> - TypeScript support for Jest</li>
+</ul>
+<doc-anchor-target id="database-testing">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#database-testing">#</doc-anchor-trigger>
+        <span>Database Testing</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li><strong>PostgreSQL 15</strong> - Primary database</li>
+<li><strong>Docker containers</strong> - Isolated test environments</li>
+<li><strong>Prisma</strong> - Database ORM and migration tool</li>
+</ul>
+<doc-anchor-target id="cicd-platform">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#cicd-platform">#</doc-anchor-trigger>
+        <span>CI/CD Platform</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li><strong>GitHub Actions</strong> - Workflow automation</li>
+<li><strong>Ubuntu Latest</strong> - Runner environment</li>
+<li><strong>pnpm</strong> - Fast package manager</li>
+</ul>
+<doc-anchor-target id="monitoring-and-reporting">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#monitoring-and-reporting">#</doc-anchor-trigger>
+        <span>Monitoring and Reporting</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li><strong>Codecov</strong> - Coverage reporting</li>
+<li><strong>GitHub Artifacts</strong> - Test result storage</li>
+<li><strong>PR Comments</strong> - Automated feedback</li>
+</ul>
+<doc-anchor-target id="-monitoring-and-metrics">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#-monitoring-and-metrics">#</doc-anchor-trigger>
+        <span><span class="docs-emoji">&#x1F4C8;</span> Monitoring and Metrics</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="performance-tracking">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#performance-tracking">#</doc-anchor-trigger>
+        <span>Performance Tracking</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li>Build duration monitoring</li>
+<li>Test execution time analysis</li>
+<li>Cache efficiency metrics</li>
+<li>Resource utilization tracking</li>
+</ul>
+<doc-anchor-target id="quality-metrics">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#quality-metrics">#</doc-anchor-trigger>
+        <span>Quality Metrics</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li>Test coverage trends</li>
+<li>Code quality indicators</li>
+<li>Security vulnerability tracking</li>
+<li>Deployment success rates</li>
+</ul>
+<doc-anchor-target id="-security-features">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#-security-features">#</doc-anchor-trigger>
+        <span><span class="docs-emoji">&#x1F512;</span> Security Features</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="automated-security-scanning">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#automated-security-scanning">#</doc-anchor-trigger>
+        <span>Automated Security Scanning</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li>Dependency vulnerability detection</li>
+<li>License compliance checking</li>
+<li>Code security analysis</li>
+<li>Container image scanning</li>
+</ul>
+<doc-anchor-target id="access-control">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#access-control">#</doc-anchor-trigger>
+        <span>Access Control</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li>Branch protection enforcement</li>
+<li>Required status checks</li>
+<li>Administrative restrictions</li>
+<li>Secret management</li>
+</ul>
+<doc-anchor-target id="-troubleshooting">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#-troubleshooting">#</doc-anchor-trigger>
+        <span><span class="docs-emoji">&#x1F6A8;</span> Troubleshooting</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="common-issues">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#common-issues">#</doc-anchor-trigger>
+        <span>Common Issues</span>
+    </h3>
+</doc-anchor-target>
+<ol>
+<li><p><strong>Test Failures</strong></p>
+<ul>
+<li>Check environment variables</li>
+<li>Verify database connectivity</li>
+<li>Review test logs and artifacts</li>
+</ul>
+</li>
+<li><p><strong>Build Failures</strong></p>
+<ul>
+<li>Validate TypeScript compilation</li>
+<li>Check dependency installation</li>
+<li>Review pnpm lockfile status</li>
+</ul>
+</li>
+<li><p><strong>Security Failures</strong></p>
+<ul>
+<li>Update vulnerable dependencies</li>
+<li>Review security audit results</li>
+<li>Apply security patches</li>
+</ul>
+</li>
+</ol>
+<doc-anchor-target id="debug-resources">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#debug-resources">#</doc-anchor-trigger>
+        <span>Debug Resources</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li>GitHub Actions logs</li>
+<li>Test execution artifacts</li>
+<li>Coverage reports</li>
+<li>Performance benchmarks</li>
+</ul>
+<doc-anchor-target id="-additional-resources">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#-additional-resources">#</doc-anchor-trigger>
+        <span><span class="docs-emoji">&#x1F4DA;</span> Additional Resources</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="external-documentation">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#external-documentation">#</doc-anchor-trigger>
+        <span>External Documentation</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li><a href="https://docs.github.com/en/actions">GitHub Actions Documentation</a></li>
+<li><a href="https://jestjs.io/">Jest Testing Framework</a></li>
+<li><a href="https://pnpm.io/">pnpm Package Manager</a></li>
+<li><a href="https://www.postgresql.org/docs/">PostgreSQL Documentation</a></li>
+</ul>
+<doc-anchor-target id="internal-resources">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#internal-resources">#</doc-anchor-trigger>
+        <span>Internal Resources</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li><a href="../rest/api/">API Documentation</a></li>
+<li><a href="../architecture/database.md">Database Schema</a></li>
+<li><a href="../deployment/">Deployment Guide</a></li>
+<li><a href="../security/">Security Guidelines</a></li>
+</ul>
+<doc-anchor-target id="-contributing">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#-contributing">#</doc-anchor-trigger>
+        <span><span class="docs-emoji">&#x1F91D;</span> Contributing</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="pipeline-improvements">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#pipeline-improvements">#</doc-anchor-trigger>
+        <span>Pipeline Improvements</span>
+    </h3>
+</doc-anchor-target>
+<ol>
+<li>Fork the repository</li>
+<li>Create a feature branch</li>
+<li>Implement changes with tests</li>
+<li>Submit a pull request</li>
+<li>Ensure all checks pass</li>
+</ol>
+<doc-anchor-target id="documentation-updates">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#documentation-updates">#</doc-anchor-trigger>
+        <span>Documentation Updates</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li>Follow markdown standards</li>
+<li>Include code examples</li>
+<li>Update table of contents</li>
+<li>Test all links and references</li>
+</ul>
+<doc-anchor-target id="-support">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#-support">#</doc-anchor-trigger>
+        <span><span class="docs-emoji">&#x1F4DE;</span> Support</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="getting-help">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#getting-help">#</doc-anchor-trigger>
+        <span>Getting Help</span>
+    </h3>
+</doc-anchor-target>
+<ul>
+<li><strong>GitHub Issues</strong> - Technical problems and bug reports</li>
+<li><strong>Team Slack</strong> - Quick questions and discussions</li>
+<li><strong>Weekly Sync</strong> - Complex issues and planning</li>
+</ul>
+<doc-anchor-target id="escalation-path">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#escalation-path">#</doc-anchor-trigger>
+        <span>Escalation Path</span>
+    </h3>
+</doc-anchor-target>
+<ol>
+<li>Team lead for technical issues</li>
+<li>DevOps engineer for infrastructure problems</li>
+<li>Security team for security concerns</li>
+<li>Product owner for business requirements</li>
+</ol>
+<hr>
+<p><strong>Last Updated:</strong> January 2025<br />
+<strong>Version:</strong> 1.0<br />
+<strong>Maintainer:</strong> MSPR 3 Development Team</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -337,20 +598,20 @@ fetch('https://api.yourdomain.com/api/covid/data', {
                             
                                 <nav id="retype-nextprev" class="print:hidden flex mt-14">
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../rest/guides/using-the-api/">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../rest/pour-commencer/installation/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-base-text-muted">Previous</span>
-                                                <span class="block mt-1">Utilisation de l'API</span>
+                                                <span class="block mt-1">Installation</span>
                                             </span>
                                         </a>
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../../rest/pour-commencer/installation/">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../ci-cd/github-actions-pipeline/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
-                                                <span class="block mt-1">Installation</span>
+                                                <span class="block mt-1">CI/CD Pipeline Documentation - Git​Hub Actions</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
@@ -394,6 +655,6 @@ fetch('https://api.yourdomain.com/api/covid/data', {
 
     <div id="retype-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Authentification", level: 3, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "CI/CD Documentation", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
