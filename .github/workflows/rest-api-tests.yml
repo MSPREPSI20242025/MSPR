@@ -46,17 +46,17 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Setup Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: "npm"
-                  cache-dependency-path: rest/package-lock.json
-
             - name: Setup pnpm
               uses: pnpm/action-setup@v2
               with:
                   version: 8.x
+
+            - name: Setup Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: rest/pnpm-lock.yaml
 
             - name: Install dependencies
               working-directory: ./rest
@@ -133,10 +133,26 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 8.x
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
+                  cache: "pnpm"
+                  cache-dependency-path: rest/pnpm-lock.yaml
+
+            - name: Install dependencies
+              working-directory: ./rest
+              run: pnpm install --frozen-lockfile
+
             - name: Run security audit
               working-directory: ./rest
               run: |
-                  npm audit --audit-level=moderate
+                  pnpm audit --audit-level=moderate
 
             - name: Run dependency check
               working-directory: ./rest
@@ -174,17 +190,17 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20.x
-                  cache: "npm"
-                  cache-dependency-path: rest/package-lock.json
-
             - name: Setup pnpm
               uses: pnpm/action-setup@v2
               with:
                   version: 8.x
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
+                  cache: "pnpm"
+                  cache-dependency-path: rest/pnpm-lock.yaml
 
             - name: Install dependencies
               working-directory: ./rest
