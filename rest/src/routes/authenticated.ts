@@ -7,16 +7,37 @@ const prisma = new PrismaClient();
 
 // Helper function to transform bigints to regular numbers
 function transformBigInts(obj: any): any {
-    Object.keys(obj).forEach((key) => {
-        if (typeof obj[key] === "bigint") {
-            obj[key] = Number(obj[key]);
-        }
-        if (typeof obj[key] === "object") {
-            obj[key] = transformBigInts(obj[key]);
-        }
-    });
+    if (obj === null || obj === undefined) {
+        return obj;
+    }
 
-    // Return primitive values as is
+    if (Array.isArray(obj)) {
+        return obj.map((item) => transformBigInts(item));
+    }
+
+    if (typeof obj === "bigint") {
+        return Number(obj);
+    }
+
+    if (typeof obj === "object") {
+        // Handle Date objects and other special objects
+        if (obj instanceof Date) {
+            return obj;
+        }
+
+        const transformed: any = {};
+        Object.keys(obj).forEach((key) => {
+            if (typeof obj[key] === "bigint") {
+                transformed[key] = Number(obj[key]);
+            } else if (typeof obj[key] === "object" && obj[key] !== null) {
+                transformed[key] = transformBigInts(obj[key]);
+            } else {
+                transformed[key] = obj[key];
+            }
+        });
+        return transformed;
+    }
+
     return obj;
 }
 
@@ -148,6 +169,18 @@ router.post(
                 total_deaths,
                 new_deaths,
             } = req.body;
+
+            if (
+                !date ||
+                !country ||
+                total_cases === undefined ||
+                new_cases === undefined ||
+                total_deaths === undefined ||
+                new_deaths === undefined
+            ) {
+                res.status(400).json({ error: "Missing required fields" });
+                return;
+            }
 
             await prisma.mpoxData.create({
                 data: {

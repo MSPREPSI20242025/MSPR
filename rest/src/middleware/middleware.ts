@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { apiToken } from "../index";
 
 export const authenticate = (
     req: Request,
@@ -14,6 +13,7 @@ export const authenticate = (
     }
 
     const token = authHeader.split(" ")[1];
+    const apiToken = process.env.API_TOKEN;
 
     if (token === apiToken) {
         next();

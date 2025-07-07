@@ -6,14 +6,36 @@ const prisma = new PrismaClient();
 
 // Helper function to transform bigints to regular numbers
 function transformBigInts(obj: any): any {
-    Object.keys(obj).forEach((key) => {
-        if (typeof obj[key] === "bigint") {
-            obj[key] = Number(obj[key]);
+    if (obj === null || obj === undefined) {
+        return obj;
+    }
+
+    if (Array.isArray(obj)) {
+        return obj.map(item => transformBigInts(item));
+    }
+
+    if (typeof obj === 'bigint') {
+        return Number(obj);
+    }
+
+    if (typeof obj === 'object') {
+        // Handle Date objects and other special objects
+        if (obj instanceof Date) {
+            return obj;
         }
-        if (typeof obj[key] === "object") {
-            obj[key] = transformBigInts(obj[key]);
-        }
-    });
+        
+        const transformed: any = {};
+        Object.keys(obj).forEach((key) => {
+            if (typeof obj[key] === 'bigint') {
+                transformed[key] = Number(obj[key]);
+            } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+                transformed[key] = transformBigInts(obj[key]);
+            } else {
+                transformed[key] = obj[key];
+            }
+        });
+        return transformed;
+    }
 
     return obj;
 }
