@@ -75,7 +75,8 @@ data1.replace("T�rkiye", "Turkey", inplace=True)
 data1.replace("Cura�ao", "Curacao", inplace=True)
 data1.replace("R�union", "Reunion", inplace=True)
 data1.replace("Saint Barth�lemy", "Saint Barthélemy", inplace=True)
-
+data1.replace("occupied Palestinian territory, including east Jerusalem", "Palestine", inplace=True)
+data1.replace("Kosovo (in accordance with UN Security Council resolution 1244 (1999))", "Kosovo", inplace=True)
 
 # Save the filtered data with explicit UTF-8 encoding
 os.makedirs('filtered', exist_ok=True)
