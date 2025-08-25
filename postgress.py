@@ -23,16 +23,22 @@ print("Loading data...")
 data1 = pd.read_csv('filtered/covid_filtered.csv')  # COVID
 data2 = pd.read_csv('filtered/mpox_filtered.csv')  # MPOX
 
+data3 = pd.read_csv('predictions/future_predictions_covid.csv')
+
 # Définir les noms des tables
 TABLE_COVID = "covid_data"
 TABLE_MPOX = "mpox_data"
+TABLE_PREDICTION = "predictions"
 
 print("Importing data...")
-# Charger les données COVID (data1 et data2)
+# Charger les données COVID (data1)
 data1.to_sql(TABLE_COVID, engine, if_exists='replace', index=True)
 
-# Charger les données MPOX (data3)
+# Charger les données MPOX (data2)
 data2.to_sql(TABLE_MPOX, engine, if_exists='replace', index=True)
+
+# Charger les données de prédiction
+data3.to_sql(TABLE_PREDICTION, engine, if_exists='replace', index=True)
 
 print("Data imported successfully!")
 connection.close()

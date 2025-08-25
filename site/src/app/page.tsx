@@ -81,7 +81,7 @@ export default function Home() {
                     <CardStat
                         title={t("data.totalCases", "Total COVID Cases")}
                         value={
-                            Number(covidTotals?.total_cases).toLocaleString() ||
+                            Number(statsSummary?.covid.total_cases).toLocaleString() ||
                             "Loading..."
                         }
                         trend="up"
@@ -92,7 +92,7 @@ export default function Home() {
                         title={t("data.totalDeaths", "Total COVID Deaths")}
                         value={
                             Number(
-                                covidTotals?.total_deaths
+                                statsSummary?.covid.total_deaths
                             ).toLocaleString() || "Loading..."
                         }
                         trend="down"

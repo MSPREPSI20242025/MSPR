@@ -41,7 +41,7 @@ services:
             NODE_ENV: ${NODE_ENV:-development}
             PORT: ${BACKEND_PORT:-3001}
             DATABASE_URL: postgresql://${POSTGRES_USER:-mspr}:${POSTGRES_PASSWORD:-mspr61}@postgres:5432/${POSTGRES_DB:-mspr}
-            API_TOKEN: ${API_TOKEN:-votre-token-api-securise-ici}
+            API_TOKEN: ${API_TOKEN:-development-token}
             CLUSTER_NAME: ${CLUSTER_NAME:-development}
             CLUSTER_FEATURES: ${CLUSTER_FEATURES:-api_technical,dataviz,etl}
             CLUSTER_LANGUAGES: ${CLUSTER_LANGUAGES:-en}

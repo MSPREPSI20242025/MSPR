@@ -24,6 +24,16 @@ function transformBigInts(obj: any): any {
             return obj;
         }
         
+        // Handle serialized big number objects (with s, e, d properties)
+        if (obj.hasOwnProperty('s') && obj.hasOwnProperty('e') && obj.hasOwnProperty('d')) {
+            // This appears to be a serialized big number - convert to regular number
+            if (Array.isArray(obj.d)) {
+                // Reconstruct the number from the serialized format
+                const digits = obj.d.join('');
+                return Number(digits);
+            }
+        }
+
         const transformed: any = {};
         Object.keys(obj).forEach((key) => {
             if (typeof obj[key] === 'bigint') {
