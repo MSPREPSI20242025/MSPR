@@ -321,4 +321,24 @@ router.delete(
     }
 );
 
+
+
+router.get("/predictions", authenticate, async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { country, limit } = req.query;
+
+        const data = await prisma.predictions.findMany({
+            where: country ? { country: String(country) } : undefined,
+            take: limit ? Number(limit) : undefined,
+            orderBy: {
+                date: "asc",
+            },
+        });
+
+        res.json(transformBigInts(data));
+    } catch (error) {
+        res.status(500).json({ error: (error as Error).message });
+    }
+});
+
 export default router;

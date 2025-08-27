@@ -38,3 +38,16 @@ model MpoxData {
   @@map("mpox_data")
   @@index([country, date])
 }
+
+model Predictions {
+  index        BigInt      @id @default(autoincrement())
+  date         String
+  country      String
+  predicted_new_cases  BigInt
+  predicted_total_cases BigInt
+  predicted_new_deaths BigInt
+  predicted_total_deaths BigInt
+
+  @@map("predictions")
+  @@index([country, date])
+}

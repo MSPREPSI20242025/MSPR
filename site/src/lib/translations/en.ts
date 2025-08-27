@@ -6,6 +6,7 @@ export const en = {
     mpox: 'MPOX',
     compare: 'Compare',
     allData: 'All Data',
+    predictions: 'Predictions',
     settings: 'Settings'
   },
 

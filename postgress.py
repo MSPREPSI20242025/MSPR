@@ -13,6 +13,10 @@ DB_URL = os.getenv("DATABASE_URL")
 if not DB_URL:
     raise ValueError("DATABASE_URL is not set in the environment variables.")
 
+# Remove schema parameter from PostgreSQL URL (not supported by psycopg2)
+if "?schema=" in DB_URL:
+    DB_URL = DB_URL.split("?schema=")[0]
+
 # Créer une connexion à PostgreSQL
 print("Connecting to PostgreSQL...")
 engine = create_engine(DB_URL)

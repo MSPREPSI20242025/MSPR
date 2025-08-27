@@ -15,6 +15,7 @@ export function Navigation() {
     { name: t('nav.mpox'), href: '/mpox' },
     { name: t('nav.compare'), href: '/compare' },
     { name: t('nav.allData'), href: '/data' },
+    { name: t('nav.predictions'), href: '/predictions' },
   ];
 
   return (

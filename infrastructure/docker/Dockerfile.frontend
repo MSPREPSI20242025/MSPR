@@ -16,7 +16,6 @@ RUN pnpm install --frozen-lockfile
 # Copier le code source
 COPY site/ ./
 
-# Définir les variables d'environnement de construction
 ARG NEXT_PUBLIC_API_URL
 ARG CLUSTER_NAME
 ARG CLUSTER_FEATURES

@@ -45,6 +45,16 @@ export interface StatsSummary {
     };
 }
 
+export interface PredictionData {
+    index?: number;
+    date: string;
+    country: string;
+    predicted_new_cases: number;
+    predicted_total_cases: number;
+    predicted_new_deaths: number;
+    predicted_total_deaths: number;
+}
+
 // API Services
 export const api = {
     // COVID public endpoints
@@ -119,6 +129,16 @@ export const api = {
                 },
             }
         );
+        return response.data;
+    },
+
+    // Predictions endpoint
+    getPredictions: async (): Promise<PredictionData[]> => {
+        const response = await axios.get(`${API_URL}/predictions`, {
+            headers: {
+                Authorization: `Bearer ${API_TOKEN}`,
+            },
+        });
         return response.data;
     },
 };
