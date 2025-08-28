@@ -42,9 +42,6 @@
         "typescript": "^5.8.2"
     },
     "pnpm": {
-        "ignoredBuiltDependencies": [
-            "@prisma/client"
-        ],
         "onlyBuiltDependencies": [
             "@prisma/client",
             "@prisma/engines",

@@ -198,10 +198,10 @@ export default function PredictionsPage() {
                             className="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             aria-label="Select time range">
                             <option value="0">All time</option>
-                            <option value="30">Last 30 days</option>
-                            <option value="90">Last 90 days</option>
-                            <option value="180">Last 180 days</option>
-                            <option value="365">Last 365 days</option>
+                            <option value="30">Next 30 days</option>
+                            <option value="90">Next 90 days</option>
+                            <option value="180">Next 180 days</option>
+                            <option value="365">Next 365 days</option>
                         </select>
                     </div>
                 </div>
